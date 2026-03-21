@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almanca Flash Kartlar</title>
+<style>
+  :root {
+    --bg:#f7f6f3;--surface:#fff;--surface2:#f0ede8;--text:#1a1a1a;--muted:#6b6860;--border:#ddd9d0;
+    --correct:#2e7d57;--correct-bg:#4caf8320;--wrong:#a33030;--wrong-bg:#e05a5a20;
+    --near:#8a5c00;--near-bg:#f5a62328;--partial:#8a5c00;--partial-bg:#f5a62320;
+    --accent:#2563c7;--tr:#7c3aed;--tr-bg:#7c3aed12;--radius:12px;--rsm:8px;
+  }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#0e0e0f;--surface:#1c1c1f;--surface2:#161618;--text:#f0ece2;--muted:#6b6860;--border:#2a2a2e;
+    --near:#e8a020;--near-bg:#f5a62322;--accent:#60a5fa;--tr:#a78bfa;--tr-bg:#a78bfa12;
+  }}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:28px 16px 60px;}
+  #app{width:100%;max-width:680px;}
+  .screen{display:none;}.screen.active{display:block;}
+  h1{font-size:22px;font-weight:600;margin-bottom:6px;}
+  h2{font-size:18px;font-weight:500;margin-bottom:10px;}
+  p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+  textarea{width:100%;min-height:200px;font-family:'Courier New',monospace;font-size:13px;padding:12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);resize:vertical;line-height:1.8;}
+  textarea:focus{outline:none;border-color:var(--text);}
+  .btn{padding:9px 20px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;cursor:pointer;transition:opacity .15s;}
+  .btn:hover{opacity:.75;}.btn:disabled{opacity:.35;cursor:default;}
+  .btn.primary{background:var(--text);color:var(--bg);border-color:var(--text);}
+  .btn.primary:hover{opacity:.82;}
+  .btn.ghost{background:transparent;border-color:var(--border);color:var(--muted);font-size:13px;padding:7px 14px;}
+  .btn.ghost:hover{color:var(--text);}
+  .row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .err{font-size:13px;color:var(--wrong);margin-top:6px;}
+  .info-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 14px;font-family:'Courier New',monospace;font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:12px;}
+  /* TABS */
+  .tab-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+  .tab-btn{padding:6px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;}
+  .tab-btn.sel{background:var(--text);color:var(--bg);border-color:var(--text);}
+  /* WORD LIST */
+  .wl-search{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;margin-bottom:12px;}
+  .wl-search:focus{outline:none;border-color:var(--text);}
+  .word-list{display:flex;flex-direction:column;gap:6px;max-height:520px;overflow-y:auto;padding-right:4px;}
+  .wl-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 14px;font-size:13px;line-height:1.7;}
+  .wl-word{font-weight:600;font-size:14px;color:var(--accent);}
+  .wl-tr{color:var(--tr);font-weight:500;font-size:12px;margin-left:6px;}
+  .wl-defs{color:var(--muted);margin-top:2px;}
+  /* GAME */
+  .prog{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:20px;}
+  .progf{height:100%;background:var(--text);transition:width .3s;}
+  .topbar{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px;align-items:center;gap:8px;}
+  .card-wrap{perspective:1000px;height:260px;margin:0 0 6px;cursor:pointer;user-select:none;}
+  .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+  .card-inner.fl{transform:rotateY(180deg);}
+  .cface{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--surface);text-align:center;overflow:hidden;}
+  .cface.back{transform:rotateY(180deg);background:var(--surface2);justify-content:flex-start;padding-top:20px;overflow-y:auto;}
+  .clabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+  .cword{font-size:26px;font-weight:600;margin-bottom:6px;line-height:1.2;}
+  .csub{font-size:13px;color:var(--muted);}
+  .cdefs{font-size:14px;line-height:1.9;width:100%;}
+  .ditem{display:flex;align-items:center;gap:8px;margin:2px 0;text-align:left;}
+  .ddot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+  .fhint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:10px;}
+  .albl{font-size:13px;color:var(--muted);margin:10px 0 8px;}
+  .arow{display:flex;gap:8px;}
+  .ainp{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;}
+  .ainp:focus{outline:none;border-color:var(--text);}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;min-height:22px;margin-top:8px;}
+  .tok{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--correct-bg);color:var(--correct);}
+  .tfail{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--wrong-bg);color:var(--wrong);}
+  .tnear{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--near-bg);color:var(--near);border:1px solid var(--near);}
+  .fb{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px;}
+  .fb.good{color:var(--correct);}.fb.near{color:var(--near);}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .ldot{width:8px;height:8px;border-radius:50%;}
+  .navrow{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;}
+  /* TURKISH HINT */
+  .tr-hint-wrap{margin-top:10px;}
+  .tr-toggle{width:100%;padding:9px 14px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--tr-bg);color:var(--tr);font-size:13px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;font-weight:500;}
+  .tr-toggle .arr{font-size:11px;transition:transform .2s;}
+  .tr-toggle.open .arr{transform:rotate(180deg);}
+  .tr-body{display:none;background:var(--tr-bg);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--rsm) var(--rsm);padding:10px 14px;font-size:14px;color:var(--tr);font-weight:500;}
+  .tr-body.open{display:block;}
+  /* RESULTS */
+  .sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0;}
+  .scard{background:var(--surface2);border-radius:var(--rsm);padding:14px;text-align:center;}
+  .snum{font-size:26px;font-weight:600;}.slbl{font-size:12px;color:var(--muted);margin-top:2px;}
+  .ritem{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .bdg{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:500;white-space:nowrap;}
+  .bok{background:var(--correct-bg);color:var(--correct);}
+  .bpart{background:var(--partial-bg);color:var(--partial);}
+  .bfail{background:var(--wrong-bg);color:var(--wrong);}
+  .rword{font-weight:500;font-size:14px;min-width:120px;}
+  .rdefs{font-size:13px;color:var(--muted);flex:1;}
+  .rpts{font-size:13px;color:var(--muted);white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="screen-input" class="screen active">
+  <h1>🇩🇪 Almanca Flash Kartlar</h1>
+  <p style="margin-bottom:18px;">Kayıtlı kelimelerle oyna, listene bak ya da kendi kelimelerini ekle.</p>
+  <div class="tab-row">
+    <button class="tab-btn sel" id="tab-saved" onclick="switchTab('saved')">Kayıtlı Kelimeler</button>
+    <button class="tab-btn" id="tab-list" onclick="switchTab('list')">Tüm Kelime Listesi</button>
+    <button class="tab-btn" id="tab-custom" onclick="switchTab('custom')">Kendi Kelimelerimi Gir</button>
+  </div>
+  <div id="pane-saved">
+    <p><strong id="saved-count">0</strong> kelime yüklendi.</p>
+    <div class="row">
+      <button class="btn primary" onclick="startWithSaved()">Tümüyle Oyna</button>
+      <button class="btn" onclick="startRandom(20)">Rastgele 20 Kart</button>
+      <button class="btn" onclick="startRandom(10)">Rastgele 10 Kart</button>
+    </div>
+  </div>
+  <div id="pane-list" style="display:none;">
+    <input class="wl-search" id="wl-search" type="text" placeholder="Kelime veya Türkçe anlam ara..." oninput="renderWordList()" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <div class="word-list" id="word-list"></div>
+  </div>
+  <div id="pane-custom" style="display:none;">
+    <div class="info-box">kelime = anlam1, anlam2 / Türkçe anlamı</div>
+    <p>/ işaretinden sonra Türkçe anlamı yazabilirsin (isteğe bağlı).</p>
+    <textarea id="winput" placeholder="Kelimelerini buraya yaz..."></textarea>
+    <div id="errmsg" class="err" style="display:none;"></div>
+    <div class="row"><button class="btn primary" onclick="startCustom()">Oyunu Başlat</button></div>
+  </div>
+</div>
+
+<div id="screen-game" class="screen">
+  <div class="prog"><div class="progf" id="progf"></div></div>
+  <div class="topbar">
+    <span id="counter">1/1</span>
+    <span>Puan: <strong id="lscore">0</strong></span>
+    <button class="btn ghost" onclick="goHome()">← Ana Menü</button>
+  </div>
+  <div class="card-wrap" onclick="flipCard()">
+    <div class="card-inner" id="cinner">
+      <div class="cface front">
+        <div class="clabel">Kelime</div>
+        <div class="cword" id="cword">—</div>
+        <div class="csub" id="csub"></div>
+      </div>
+      <div class="cface back">
+        <div class="clabel">Anlamlar</div>
+        <div class="cdefs" id="cdefs"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fhint" id="fhint">Kartı çevirmek için tıkla</div>
+  <div id="aarea">
+    <div class="albl" id="albl">En az 2 anlamı yaz — her cevabı Enter ile ekle:</div>
+    <div class="arow">
+      <input class="ainp" id="ainp" type="text" placeholder="Cevap yaz..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <button class="btn" onclick="addAns()">Ekle</button>
+    </div>
+    <div class="tags" id="atags"></div>
+    <div class="fb" id="afb"></div>
+    <div class="legend">
+      <span><span class="ldot" style="background:var(--correct)"></span>Doğru</span>
+      <span><span class="ldot" style="background:var(--near)"></span>Yakın</span>
+      <span><span class="ldot" style="background:var(--wrong)"></span>Yanlış</span>
+    </div>
+  </div>
+  <div class="navrow">
+    <button class="btn" onclick="skipCard()">Atla</button>
+    <button class="btn primary" id="btnnext" onclick="nextCard()" disabled>Sonraki →</button>
+  </div>
+  <div class="tr-hint-wrap" id="tr-hint-wrap">
+    <button class="tr-toggle" id="tr-toggle" onclick="toggleTr()">
+      <span>🇹🇷 Türkçe anlamı göster</span>
+      <span class="arr">▼</span>
+    </button>
+    <div class="tr-body" id="tr-body"></div>
+  </div>
+</div>
+
+<div id="screen-result" class="screen">
+  <h2>Tur Bitti!</h2>
+  <div class="sgrid">
+    <div class="scard"><div class="snum" id="rscore">0</div><div class="slbl">Toplam Puan</div></div>
+    <div class="scard"><div class="snum" id="rcorrect">0</div><div class="slbl">Tam Doğru</div></div>
+    <div class="scard"><div class="snum" id="rpartial">0</div><div class="slbl">Kısmen</div></div>
+  </div>
+  <div id="rlist"></div>
+  <div class="row" style="margin-top:20px;">
+    <button class="btn primary" onclick="restartGame()">Tekrar Oyna</button>
+    <button class="btn" onclick="goHome()">← Ana Menü</button>
+  </div>
+</div>
+
+</div>
+<script>
+const TR={'Kindheit':'Çocukluk','Verbringen':'(Vakit) geçirmek','Jugend':'Gençlik','Gestorben':'Ölmüş / Vefat etmiş','Geboren':'Doğmuş','Annehmen':'Kabul etmek / Varsaymak','Älteste':'En yaşlı / En eski','Berühmte':'Ünlü / Meşhur','Nachweislich':'Kanıtlanabilir şekilde','Buchdruck':'Kitap basımı / Matbaacılık','Universität':'Üniversite','Druckverfahren':'Baskı yöntemi','Erfinder':'Mucit','Vermutlich':'Muhtemelen','Jedoch':'Ancak / Fakat','Druckerzeugnis':'Basılı yayın / Matbu eser','Erscheinen':'Yayınlanmak / Görünmek','Untersuchen':'Araştırmak / İncelemek','Sinn':'Anlam / Duygu','Zweck':'Amaç','Anthropologie':'Antropoloji (İnsan bilimi)','Bloß':'Sadece / Yalnızca','Spezifika':'Özellikler / Şahsına münhasır durumlar','Existenz':'Varlık / Varoluş','Empirisch':'Deneysel / Gözleme dayalı','Entwickeln':'Geliştirmek','Disziplin':'Disiplin / Bilim dalı','Zuhilfenahme':'Yardım alma / Kullanma','Versuchen':'Denemek / Çabalamak','Erkenntnis':'Bilgi / Tespit / Farkındalık','Begründer':'Kurucu','Zentral':'Merkezi / Ana / Önemli','Autoren':'Yazarlar','Betonen':'Vurgulamak','Defizit':'Eksiklik / Açık','Kompensieren':'Telafi etmek / Karşılamak','Krankheit':'Hastalık','Fortschreitend':'İlerleyen','Schrumpfung':'Küçülme / Daralma','Schwierig':'Zor / Güç','Problem':'Sorun / Problem','Symptome':'Belirtiler','Diagnose':'Teşhis / Tanı','Deutlich':'Net / Belirgin','Benennung':'Adlandırma','Fähigkeiten':'Yetenekler / Beceriler','Wesentlich':'Esaslı / Önemli / Temel','Aktuell':'Güncel','Indiz':'Belirti / İpucu','Ursache':'Neden / Sebep','Gering':'Düşük / Az','Anhaltend':'Sürekli / Devam eden','Zerstörung':'Yıkım / Tahribat','Destruktion':'Yıkım / Bozunma','Gerade':'Şu an / Tam / Özellikle','Trockener':'Daha kuru','Gebiet':'Bölge / Alan','Katastrophal':'Felaket / Korkunç','Führen zu':'Yol açmak / Sebep olmak','Wachsen':'Büyümek / Artmak','Erhöht':'Yükselmiş / Artmış','Zunehmend':'Artan bir şekilde','Errichtung':'İnşa / Kurma','Gigantisch':'Dev / Devasa','Zu erwähnen':'Bahsetmek / Anılmak','Streit':'Kavga / Tartışma','Anliegerstaaten':'Kıyı ülkeleri / Komşu devletler','Fluss':'Nehir','Protest einlegen':'İtiraz etmek / Protesto etmek','Unterbinden':'Engellemek / Durdurmak','Erfolgreich':'Başarılı','Rezept':'Reçete / Tarif / Yöntem','Sich widersetzen':'Karşı koymak / Direnmek','Produzieren':'Üretmek','Bedingungen':'Koşullar / Şartlar','Gestalten':'Şekillendirmek / Tasarlamak','Unternehmen':'Şirket / İşletme','Binden an':'Bağlamak','Beteiligen':'Katılmak / Dahil etmek','Zugang':'Erişim / Giriş','Erwerben':'Edinmek / Kazanmak','Investoren':'Yatırımcılar','Gewinne':'Karlar / Kazançlar','Garantieren':'Garanti etmek','Ankurbeln':'Canlandırmak / Teşvik etmek','Entwicklung':'Gelişim','Vergangenheit':'Geçmiş','Erforschen':'Araştırmak / Keşfetmek','Sowie':'Yanı sıra / Ve de','Herausarbeiten':'Ortaya çıkarmak / Belirginleştirmek','Möglichst':'Mümkün olduğunca','Idee':'Fikir','Anstehende':'Yaklaşan / Bekleyen','Erweiterung':'Genişletme / Büyütme','Umfassend':'Kapsamlı','Vielseitig':'Çok yönlü','Ausstellung':'Sergi','Verbundenheit':'Bağlılık','Wertvoll':'Değerli','Verzichten':'Vazgeçmek','Aufbauen':'İnşa etmek / Kurmak','Konkurrieren':'Rekabet etmek','Exportieren':'İhraç etmek','Einführen':'İthal etmek / Tanıtmak','Erzeugnisse':'Ürünler','Getreide':'Tahıl','Hart':'Sert','Weich':'Yumuşak','Elastisch':'Esnek','Struktur':'Yapı','Basieren':'Dayanmak / Baz almak','Produktion':'Üretim','Menge':'Miktar','Preisgünstig':'Uygun fiyatlı','Traditionell':'Geleneksel','Kraftstoff':'Yakıt','Zulassen':'İzin vermek','Möglichkeiten':'Olanaklar / Seçenekler','Verdrängen':'Yerinden etmek / Bastırmak','Steigen':'Yükselmek / Artmak','Interesse':'İlgi','Themen':'Konular','Zusammenhang':'Bağlam / İlişki','Aufmerksamkeit':'Dikkat','Hilfreich':'Yardımcı / Faydalı','Häufig':'Sık sık','Situation':'Durum','Benötigen':'İhtiyaç duymak','Gesteigert':'Artırılmış','Trainierbar':'Eğitilebilir','Leichter':'Daha kolay','Streitkräfte':'Silahlı kuvvetler / Ordu','Heute':'Bugün','Bezeichnen':'Tanımlamak / Adlandırmak','Land':'Ülke','Verschieden':'Farklı / Çeşitli','Meist':'Çoğunlukla','Bestehen':'Oluşmak / Mevcut olmak','Vermindern':'Azaltmak','Zunächst':'Öncelikle / İlk olarak','Erstmals':'İlk kez','Preiswert':'Hesaplı / Ucuz','Allerdings':'Gerçi / Ancak','Bisher':'Şimdiye kadar'};
+
+const SAVED_RAW=`Kindheit = Kinderjahre, frühe Lebensjahre
+Verbringen = aufhalten
+Jugend = Pubertät, Jugendzeit
+Gestorben = verstorben, Tod, hingeschieden, sein Leben verlieren
+Geboren = gebürtig, zur/auf die Welt gekommen
+Annehmen = empfangen, akzeptieren, entgegennehmen, vermuten, davon ausgehen, für wahrscheinlich halten
+Älteste = früher
+Berühmte = bekannt, prominent, namhaft, vertraut, populär, hochgestellt, beliebt
+Nachweislich = beweisbar, erwiesenermaßen, belegt
+Buchdruck = Druckkunst, Lettern, Druckwesen
+Universität = Hochschule, Lehranstalt
+Druckverfahren = Druckmethode, Drucktechnik, Druckvorgang
+Erfinder = Entdecker, Urheber, Schöpfer
+Vermutlich = wahrscheinlich, wohl, möglicherweise, anscheinend, voraussichtlich, mutmaßlich, angenommen, eventuell
+Jedoch = aber, hingegen, dennoch
+Druckerzeugnis = Druckprodukt, Drucksachen
+Erscheinen = publizieren, herausgeben, veröffentlichen, herausbringen
+Untersuchen = analysieren, erforschen, überprüfen, recherchieren, kontrollieren
+Sinn = Bedeutung, Verstand, Geist
+Zweck = Ziel
+Anthropologie = Menschenkunde, Humanwissenschaft
+Bloß = nur
+Spezifika = Besonderheit, Merkmale, Eigenheit
+Existenz = Dasein, Bestand
+Empirisch = praktisch, experimentell, praxisbezogen, beobachtungsbasierend
+Entwickeln = hervorbringen, gestalten, entfalten, aufbauen, konzipieren, ausarbeiten, ausbilden, entstehen
+Disziplin = Bereich, Fachgebiet
+Zuhilfenahme = Verwendung, Inanspruchnahme, mittels, Nutzung, Mithilfe
+Versuchen = probieren, anstreben, sich bemühen, streben
+Erkenntnis = Befunde, Einsicht
+Begründer = Gründer, Entwickler, Urheber, Vordenker
+Zentral = Mittelpunkt, wichtig, Hauptdenker
+Autoren = Schreiber, Schriftsteller, Poet, Verfasser
+Betonen = hervorheben, unterstreichen, markieren
+Defizit = Fehlende, Mangel
+Kompensieren = ersetzen, ausgleichen
+Krankheit = leiden, Erkrankungen, Beschwerde
+Fortschreitend = zunehmend, weiterentwickelnd, progressiv, kontinuierlich, voranschreitend
+Schrumpfung = Abnahme, Reduktion, Minderung, Rückbildung
+Schwierig = kompliziert, erschwerend, anspruchsvoll, hart, mühevoll, mühsam, anstrengend
+Problem = Herausforderung
+Symptome = Anzeichen, Merkmale, Hinweise, Krankheitszeichen
+Diagnose = Feststellen, Befund, ärztliche Beurteilung, Erkennung, Untersuchungsergebnisse
+Deutlich = klar, eindeutig, offensichtlich, explizit, erkennbar, augenfällig, ausgeprägt, verständlich
+Benennung = Bezeichnung, Name, Beteiligung
+Fähigkeiten = Begabung, Kompetenz, Fertigkeiten, Qualifikation
+Wesentlich = erheblich, maßgeblich, entscheidend, grundlegend, signifikant, wichtig, fundamental, zentral, bedeutend, notwendig, elementar
+Aktuell = derzeit, momentan, gegenwärtig, jetzt, modern, neu, zeitgemäß
+Indiz = Hinweis, Merkmal, Beweis
+Ursache = Grund, Auslöser
+Gering = kaum, klein, niedrig, schwach, wenig
+Anhaltend = andauernd, stetig, dauerhaft, fortwährend, ständig, fortlaufend, konstant, permanent
+Zerstörung = Zusammenbruch, Vernichtung, Verwüstung, Beschädigung, Demolieren
+Destruktion = Verfall, Zerfall, Abbau, Ausmerzung
+Gerade = besonders, ausgerechnet, genau
+Trockener = dürre, arid, regenarm
+Gebiet = Region, Bereich, Landstrich
+Katastrophal = verheerend, fatal, zerstörerisch
+Führen zu = verursachen, bewirken, auslösen
+Wachsen = zunehmen, steigen, anwachsen
+Erhöht = gesteigert, vermehrt, höher
+Zunehmend = immer mehr, fortlaufend, progressiv
+Errichtung = Aufbau, Gründung, Erstellung
+Gigantisch = riesig, enorm, gewaltig
+Zu erwähnen = nennen, anführen, erwähnenswert finden
+Streit = Konflikt, Auseinandersetzung, Disput
+Anliegerstaaten = Nachbarstaaten, angrenzende Staaten, Uferstaaten
+Fluss = Strom, Gewässer, Fließgewässer
+Protest einlegen = Einspruch haben, Widerstand leisten, Beschwerde einreichen
+Unterbinden = stoppen, verhindern, blockieren
+Erfolgreich = gelungen, siegreich
+Rezept = Methode, Vorgehensweise, Strategie
+Sich widersetzen = sich wehren, Widerstand leisten, opponieren
+Produzieren = herstellen, fertigen, erzeugen
+Bedingungen = Voraussetzungen, Umstände, Konditionen
+Gestalten = formen, organisieren, einrichten
+Unternehmen = Firmen, Konzerne, Betriebe
+Binden an = koppeln an, knüpfen an, abhängig machen von
+Beteiligen = teilhaben lassen, einbeziehen, mitwirken lassen
+Zugang = Zutritt, Zugriff, Zugangsmöglichkeit
+Erwerben = erlangen, gewinnen, sich aneignen
+Investoren = Geldgeber, Kapitalgeber, Anleger
+Gewinne = Profite, Erträge, Einnahmen
+Garantieren = zusichern, gewährleisten, versprechen
+Ankurbeln = fördern, beleben, vorantreiben
+Entwicklung = Fortschritt, Wachstum, Entwicklungsschub
+Vergangenheit = Vorzeit, Historie, alt, frühere, vorbei
+Erforschen = untersuchen, analysieren, ergründen, ermitteln, herausfinden, erkunden, prüfen, kontrollieren, abchecken, recherchieren, durchleuchten
+Sowie = und, ebenso, nebst, zudem, ferner
+Herausarbeiten = verdeutlichen, herausstellen, herauskristallisieren
+Möglichst = soweit wie möglich, bestmöglich
+Idee = Einfall, Gedanke, Auffassung, Vorschlag
+Anstehende = bevorstehende, künftige, in Zukunft geschehen, nahend
+Erweiterung = Zunahme, Ausbau, Erhöhung, Vergrößerung, Expansion
+Umfassend = umfangreich, vollständig, ausgiebig, ausführlich
+Vielseitig = reichhaltig, vielfältig, allseitig
+Ausstellung = Präsentation, Schau, Exponate, Darbietung, Vorzeigung
+Verbundenheit = Zusammengehörigkeit, Bindung, Zugehörigkeit, Nähe
+Wertvoll = unverzichtbar, unersetzlich, kostbar, hochwertig, bedeutend, Schatz
+Verzichten = aufgeben, entsagen, unterlassen
+Aufbauen = errichten, gründen, entwickeln
+Konkurrieren = wetteifern, mithalten
+Exportieren = ausführen, verkaufen ins Ausland, liefern
+Einführen = importieren, einbringen, beziehen
+Erzeugnisse = Produkte, Güter, Waren
+Getreide = Korn, Saatgut, Feldfrucht
+Hart = streng, fest, solide, widerstandsfähig
+Weich = flexibel, soft, biegsam, flauschig, nachgiebig, geschmeidig
+Elastisch = dehnbar, biegbar
+Struktur = Aufbau, Anlage, Form, Ordnung
+Basieren = beruhen, gründen, stützen
+Produktion = Herstellung, Fertigung, Ware, Erzeugung, Anfertigung, Fabrikation
+Menge = Anzahl, Quantität, Masse, Volumen, Umfang, Kontingenz
+Preisgünstig = billig, kosteneffizient, preiswert, günstig
+Traditionell = herkömmlich, konventionell, überliefert, kulturell bedingt, klassisch
+Kraftstoff = Treibstoff, Brennstoff
+Zulassen = erlauben, ermöglichen, gestatten
+Möglichkeiten = Chancen, Optionen, Wege
+Verdrängen = ersetzen, ablösen, zurückdrängen
+Steigen = zunehmen, wachsen, sich erhöhen
+Interesse = Neugier, Aufmerksamkeit, Augenmerk, Begeisterung, Motivation, Wunsch, Belang
+Themen = Gegenstand, Sache, Inhalt, Stoff, Thematik
+Zusammenhang = Beziehung, Verbindung, Bezug, Kontext, Verhältnis, Verknüpfung
+Aufmerksamkeit = Konzentration, Beachtung, Achtsamkeit, Fokus, Interesse, Zuwendung, Achtung
+Hilfreich = nützlich, förderlich, sinnvoll
+Häufig = oft, vielfach, regelmäßig
+Situation = Lage, Zustand, Umstand
+Benötigen = brauchen, erfordern, voraussetzen
+Gesteigert = erhöht, verbessert, verstärkt
+Trainierbar = übbar, erlernbar, ausbaubar
+Leichter = einfacher, müheloser, schneller
+Streitkräfte = Truppen, Armee
+Heute = heutzutage, zur Zeit
+Bezeichnen = nennen, definieren
+Land = Nation, Staat
+Verschieden = unterschiedlich, divers
+Meist = oft, überwiegend
+Bestehen = stammen, entstehen
+Vermindern = reduzieren, senken
+Zunächst = vorerst, zuerst, erst
+Erstmals = zum ersten Mal, erstmalig
+Preiswert = günstig, billig
+Allerdings = sondern, aber
+Bisher = bis jetzt, bislang`;
+
+let ALL_CARDS=[],cards=[],cur=0,score=0,results=[],typed=[],answered=false,flipped=false;
+
+function parseCards(raw){
+  const out=[];
+  raw.split('\n').forEach(line=>{
+    const l=line.trim();if(!l)return;
+    const si=l.indexOf('/');
+    const main=si>=0?l.slice(0,si).trim():l;
+    const trPart=si>=0?l.slice(si+1).trim():'';
+    const eq=main.indexOf('=');if(eq<0)return;
+    const word=main.slice(0,eq).trim();
+    const meanings=main.slice(eq+1).split(',').map(m=>m.trim()).filter(m=>m);
+    if(word&&meanings.length>=1) out.push({word,meanings,tr:trPart||TR[word]||''});
+  });
+  return out;
+}
+function norm(s){return s.trim().toLowerCase().replace(/\s+/g,' ');}
+function isMatch(a,m){return norm(a)===norm(m);}
+function lev(a,b){
+  const m=a.length,n=b.length,dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function isNear(input,meaning){
+  const a=norm(input),b=norm(meaning);if(a===b)return false;
+  if(lev(a,b)<=(b.length<=5?1:2))return true;
+  if(a.length>=4&&b.length>=4&&b.startsWith(a.slice(0,4)))return true;
+  return false;
+}
+function tagStatus(input,meanings){
+  if(meanings.some(m=>isMatch(input,m)))return'ok';
+  if(meanings.some(m=>isNear(input,m)))return'near';
+  return'fail';
+}
+
+ALL_CARDS=parseCards(SAVED_RAW);
+document.getElementById('saved-count').textContent=ALL_CARDS.length;
+
+function renderWordList(){
+  const q=(document.getElementById('wl-search').value||'').toLowerCase();
+  const f=ALL_CARDS.filter(c=>!q||c.word.toLowerCase().includes(q)||(c.tr&&c.tr.toLowerCase().includes(q)));
+  document.getElementById('word-list').innerHTML=f.map(c=>`<div class="wl-item"><span class="wl-word">${c.word}</span>${c.tr?`<span class="wl-tr">· ${c.tr}</span>`:''}<div class="wl-defs">${c.meanings.join(', ')}</div></div>`).join('');
+}
+function switchTab(t){
+  ['saved','list','custom'].forEach(id=>{
+    document.getElementById('tab-'+id).className='tab-btn'+(t===id?' sel':'');
+    document.getElementById('pane-'+id).style.display=t===id?'block':'none';
+  });
+  if(t==='list')renderWordList();
+}
+function startWithSaved(){launchGame([...ALL_CARDS].sort(()=>Math.random()-.5));}
+function startRandom(n){launchGame([...ALL_CARDS].sort(()=>Math.random()-.5).slice(0,Math.min(n,ALL_CARDS.length)));}
+function startCustom(){
+  const p=parseCards(document.getElementById('winput').value);
+  const e=document.getElementById('errmsg');
+  if(!p.length){e.style.display='block';e.textContent='Geçerli kart bulunamadı.';return;}
+  e.style.display='none';launchGame(p);
+}
+function launchGame(list){cards=list;cur=0;score=0;results=[];show('screen-game');loadCard();}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function goHome(){show('screen-input');}
+function req(c){return c.meanings.length===1?1:2;}
+
+function loadCard(){
+  flipped=false;answered=false;typed=[];
+  document.getElementById('cinner').classList.remove('fl');
+  document.getElementById('ainp').value='';
+  document.getElementById('atags').innerHTML='';
+  document.getElementById('afb').textContent='';
+  document.getElementById('afb').className='fb';
+  document.getElementById('btnnext').disabled=true;
+  document.getElementById('aarea').style.display='block';
+  document.getElementById('fhint').textContent='Kartı çevirmek için tıkla';
+  document.getElementById('tr-toggle').className='tr-toggle';
+  document.getElementById('tr-body').className='tr-body';
+  const c=cards[cur];
+  document.getElementById('cword').textContent=c.word;
+  document.getElementById('csub').textContent=c.meanings.length+' anlam';
+  document.getElementById('counter').textContent=(cur+1)+'/'+cards.length;
+  document.getElementById('progf').style.width=((cur/cards.length)*100)+'%';
+  document.getElementById('lscore').textContent=score;
+  document.getElementById('cdefs').innerHTML=c.meanings.map(m=>`<div class="ditem"><div class="ddot"></div><span>${m}</span></div>`).join('');
+  const trText=c.tr||TR[c.word]||'';
+  const trWrap=document.getElementById('tr-hint-wrap');
+  if(trText){trWrap.style.display='block';document.getElementById('tr-body').textContent=trText;}
+  else{trWrap.style.display='none';}
+  document.getElementById('albl').textContent=req(c)===1?'Doğru anlamı yaz ve Enter\'a bas:':'En az 2 anlamı yaz — her cevabı Enter ile ekle:';
+  const inp=document.getElementById('ainp');inp.focus();
+  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();addAns();}};
+}
+function flipCard(){
+  flipped=!flipped;
+  document.getElementById('cinner').classList.toggle('fl',flipped);
+  document.getElementById('fhint').textContent=flipped?'Geri çevirmek için tıkla':'Kartı çevirmek için tıkla';
+}
+function toggleTr(){
+  const btn=document.getElementById('tr-toggle'),body=document.getElementById('tr-body');
+  const open=body.classList.contains('open');
+  btn.className='tr-toggle'+(open?'':' open');
+  body.className='tr-body'+(open?'':' open');
+}
+function addAns(){
+  if(answered)return;
+  const inp=document.getElementById('ainp');
+  const val=inp.value.trim();if(!val)return;
+  val.split(',').map(p=>p.trim()).filter(p=>p).forEach(p=>{if(!typed.some(t=>norm(t)===norm(p)))typed.push(p);});
+  inp.value='';renderTags();checkLive();
+}
+function renderTags(){
+  const c=cards[cur];
+  document.getElementById('atags').innerHTML=typed.map(a=>{const s=tagStatus(a,c.meanings);return`<span class="${s==='ok'?'tok':s==='near'?'tnear':'tfail'}">${a}</span>`;}).join('');
+}
+function checkLive(){
+  if(answered)return;
+  const c=cards[cur];
+  const matched=c.meanings.filter(m=>typed.some(a=>isMatch(a,m)));
+  const nearOnly=typed.some(a=>tagStatus(a,c.meanings)==='near');
+  const r=req(c);
+  const fb=document.getElementById('afb');
+  if(matched.length>=r){
+    const full=matched.length>=c.meanings.length,pts=full?c.meanings.length:matched.length;
+    fb.textContent=full?`Mükemmel! Tüm anlamları buldun. +${pts} puan`:`${matched.length}/${c.meanings.length} anlam bulundu. +${pts} puan`;
+    fb.className='fb good';document.getElementById('btnnext').disabled=false;
+  }else if(nearOnly&&matched.length<r){fb.textContent='Çok yakındın! Yazımı kontrol et.';fb.className='fb near';}
+  else if(typed.length>0&&matched.length===0){fb.textContent='Eşleşen anlam yok. Tam kelimeyi yaz.';fb.className='fb';}
+  else if(matched.length>0&&matched.length<r){fb.textContent=`${matched.length} anlam bulundu, en az ${r} gerekli.`;fb.className='fb';}
+  else{fb.textContent='';fb.className='fb';}
+}
+function finishCard(skipped){
+  if(answered)return;answered=true;
+  const c=cards[cur];
+  const matched=c.meanings.filter(m=>typed.some(a=>isMatch(a,m)));
+  const r=req(c);let pts=0,status='fail';
+  if(!skipped){if(matched.length>=c.meanings.length){pts=c.meanings.length;status='ok';}else if(matched.length>=r){pts=matched.length;status='part';}}
+  score+=pts;results.push({word:c.word,meanings:c.meanings,status,pts});
+  document.getElementById('lscore').textContent=score;
+  document.getElementById('btnnext').disabled=false;
+  if(!flipped)flipCard();
+  document.getElementById('aarea').style.display='none';
+}
+function skipCard(){finishCard(true);nextCard();}
+function nextCard(){if(!answered){finishCard(false);return;}cur++;if(cur>=cards.length){showResults();return;}loadCard();}
+function showResults(){
+  document.getElementById('progf').style.width='100%';
+  const ok=results.filter(r=>r.status==='ok').length,part=results.filter(r=>r.status==='part').length;
+  document.getElementById('rscore').textContent=score;
+  document.getElementById('rcorrect').textContent=ok;
+  document.getElementById('rpartial').textContent=part;
+  document.getElementById('rlist').innerHTML=results.map(r=>{
+    const bc=r.status==='ok'?'bok':r.status==='part'?'bpart':'bfail';
+    const bt=r.status==='ok'?'Tam':r.status==='part'?'Kısmen':'Atlandı';
+    return`<div class="ritem"><span class="bdg ${bc}">${bt}</span><span class="rword">${r.word}</span><span class="rdefs">${r.meanings.join(', ')}</span><span class="rpts">${r.pts>0?'+'+r.pts+' puan':'0 puan'}</span></div>`;
+  }).join('');
+  show('screen-result');
+}
+function restartGame(){cur=0;score=0;results=[];cards=cards.sort(()=>Math.random()-.5);show('screen-game');loadCard();}
+</script>
+</body>
+</html>
