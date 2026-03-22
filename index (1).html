@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almanca Flash Kartlar</title>
+<style>
+:root{--bg:#f7f6f3;--surface:#fff;--surface2:#f0ede8;--text:#1a1a1a;--muted:#6b6860;--border:#ddd9d0;--correct:#2e7d57;--correct-bg:#4caf8320;--wrong:#a33030;--wrong-bg:#e05a5a20;--near:#8a5c00;--near-bg:#f5a62328;--partial-bg:#f5a62320;--accent:#2563c7;--tr-color:#7c3aed;--radius:12px;--rsm:8px;}
+@media(prefers-color-scheme:dark){:root{--bg:#0e0e0f;--surface:#1c1c1f;--surface2:#161618;--text:#f0ece2;--muted:#6b6860;--border:#2a2a2e;--near:#e8a020;--near-bg:#f5a62322;--accent:#60a5fa;--tr-color:#a78bfa;}}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:24px 16px 60px;}
+#app{width:100%;max-width:700px;}
+.screen{display:none;}.screen.active{display:block;}
+h2{font-size:18px;font-weight:500;margin-bottom:10px;}
+input[type=text],input[type=password]{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;margin-bottom:10px;}
+input:focus{outline:none;border-color:var(--accent);}
+.btn{padding:9px 20px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;cursor:pointer;transition:opacity .15s;}
+.btn:hover{opacity:.75;}.btn:disabled{opacity:.35;cursor:default;}
+.btn.primary{background:var(--text);color:var(--bg);border-color:var(--text);}.btn.primary:hover{opacity:.82;}
+.btn.ghost{background:transparent;border-color:var(--border);color:var(--muted);font-size:13px;padding:7px 14px;}.btn.ghost:hover{color:var(--text);}
+.err{font-size:13px;color:var(--wrong);margin:6px 0;}
+
+/* AUTH */
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:400px;margin:60px auto 0;}
+.auth-box h2{text-align:center;margin-bottom:20px;}
+.auth-tabs{display:flex;margin-bottom:20px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;}
+.auth-tab{flex:1;padding:9px;text-align:center;cursor:pointer;font-size:14px;background:var(--surface2);color:var(--muted);}
+.auth-tab.sel{background:var(--text);color:var(--bg);}
+
+/* MENU */
+.user-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;font-size:13px;color:var(--muted);}
+.user-bar strong{color:var(--text);}
+.menu-tabs{display:flex;margin-bottom:20px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;}
+.menu-tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:14px;background:var(--surface2);color:var(--muted);border:none;}
+.menu-tab.sel{background:var(--text);color:var(--bg);}
+.menu-empty{text-align:center;padding:60px 20px;font-size:14px;color:var(--muted);}
+
+/* KARISIK */
+.karisik-row{display:flex;gap:10px;}
+.karisik-btn{flex:1;padding:14px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;text-align:center;}
+.karisik-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* WORD LIST */
+.wl-search{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;margin-bottom:14px;}
+.wl-search:focus{outline:none;border-color:var(--accent);}
+.wl-group{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:6px;margin-top:16px;}
+.wl-group:first-child{margin-top:0;}
+.wl-item{display:flex;flex-direction:column;padding:7px 0;border-bottom:1px solid var(--border);}
+.wl-word{font-weight:600;font-size:14px;color:var(--accent);}
+.wl-tr{font-size:12px;color:var(--tr-color);margin-top:1px;}
+.wl-defs{font-size:13px;color:var(--muted);margin-top:2px;}
+
+/* CHAPTERS */
+.bolum-info{font-size:13px;color:var(--muted);margin-bottom:14px;padding:10px 14px;background:var(--surface2);border-radius:var(--rsm);border-left:3px solid var(--accent);}
+.chapter-list{display:flex;flex-direction:column;gap:10px;}
+.chapter-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .15s;}
+.chapter-card:hover:not(.locked){border-color:var(--accent);}
+.chapter-card.locked{opacity:.45;cursor:default;}
+.chapter-card.done{border-color:var(--correct);}
+.ch-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.ch-num{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.ch-title{font-size:15px;font-weight:600;}
+.ch-count{font-size:12px;color:var(--muted);margin-top:2px;}
+.ch-badge{font-size:11px;padding:3px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+.ch-badge.done{background:var(--correct-bg);color:var(--correct);}
+.ch-badge.lock{background:var(--wrong-bg);color:var(--wrong);}
+.ch-badge.open{background:var(--surface2);color:var(--muted);}
+.ch-prog{height:3px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden;}
+.ch-prog-fill{height:100%;background:var(--accent);transition:width .3s;}
+.spinner{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+
+/* GAME */
+.prog{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:18px;}
+.progf{height:100%;background:var(--text);transition:width .3s;}
+.topbar{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:10px;align-items:center;gap:8px;}
+.card-wrap{perspective:1000px;height:240px;margin:0 0 6px;cursor:pointer;user-select:none;}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.card-inner.fl{transform:rotateY(180deg);}
+.cface{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--surface);text-align:center;overflow:hidden;}
+.cface.back{transform:rotateY(180deg);background:var(--surface2);justify-content:flex-start;padding-top:20px;overflow-y:auto;}
+.clabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.cword{font-size:26px;font-weight:600;margin-bottom:6px;line-height:1.2;}
+.csub{font-size:13px;color:var(--muted);}
+.cdefs{font-size:14px;line-height:1.9;width:100%;}
+.ditem{display:flex;align-items:center;gap:8px;margin:2px 0;text-align:left;}
+.ddot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+.fhint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;}
+
+/* ANSWER */
+.albl{font-size:13px;color:var(--muted);margin:8px 0 6px;}
+.arow{display:flex;gap:8px;}
+.ainp{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;}
+.ainp:focus{outline:none;border-color:var(--text);}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.tok{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--correct-bg);color:var(--correct);}
+.tfail{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--wrong-bg);color:var(--wrong);}
+.tnear{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--near-bg);color:var(--near);border:1px solid var(--near);}
+.fb{font-size:13px;color:var(--muted);margin-top:6px;min-height:16px;}
+.fb.good{color:var(--correct);}.fb.near{color:var(--near);}
+.legend{display:flex;gap:10px;font-size:12px;color:var(--muted);margin-top:6px;}
+.legend span{display:flex;align-items:center;gap:4px;}
+.ldot{width:7px;height:7px;border-radius:50%;}
+
+/* BOTTOM — no gap between navrow and TR button */
+.bottom-row{margin-top:10px;}
+.navrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;}
+.tr-toggle-btn{width:100%;padding:8px 14px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface2);color:var(--tr-color);font-size:13px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;font-weight:500;}
+.tr-toggle-btn .arr{font-size:11px;transition:transform .2s;}
+.tr-toggle-btn.open .arr{transform:rotate(180deg);}
+.tr-body{display:none;background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--rsm) var(--rsm);padding:9px 14px;font-size:14px;color:var(--tr-color);font-weight:500;}
+.tr-body.open{display:block;}
+
+/* RESULTS */
+.sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0;}
+.scard{background:var(--surface2);border-radius:var(--rsm);padding:14px;text-align:center;}
+.snum{font-size:26px;font-weight:600;}.slbl{font-size:12px;color:var(--muted);margin-top:2px;}
+.ritem{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.bdg{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:500;white-space:nowrap;}
+.bok{background:var(--correct-bg);color:var(--correct);}
+.bpart{background:var(--partial-bg);color:var(--near);}
+.bfail{background:var(--wrong-bg);color:var(--wrong);}
+.rword{font-weight:500;font-size:14px;min-width:110px;}
+.rdefs{font-size:13px;color:var(--muted);flex:1;}
+.rpts{font-size:13px;color:var(--muted);white-space:nowrap;}
+.complete-banner{background:var(--correct-bg);border:1px solid var(--correct);border-radius:var(--radius);padding:14px;text-align:center;margin-bottom:14px;color:var(--correct);font-weight:500;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- AUTH -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-box">
+    <h2>Almanca Flash Kartlar</h2>
+    <div class="auth-tabs">
+      <div class="auth-tab sel" id="tab-login" onclick="switchAuthTab('login')">Giris Yap</div>
+      <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Kayit Ol</div>
+    </div>
+    <div id="auth-login">
+      <input type="text" id="login-user" placeholder="Kullanici adi" autocomplete="off" autocorrect="off" autocapitalize="off"/>
+      <input type="password" id="login-pass" placeholder="Sifre"/>
+      <div id="login-err" class="err" style="display:none;"></div>
+      <button class="btn primary" style="width:100%;margin-top:4px;" onclick="doLogin()">Giris Yap</button>
+    </div>
+    <div id="auth-register" style="display:none;">
+      <input type="text" id="reg-user" placeholder="Kullanici adi" autocomplete="off" autocorrect="off" autocapitalize="off"/>
+      <input type="password" id="reg-pass" placeholder="Sifre (min 6 karakter)"/>
+      <input type="password" id="reg-pass2" placeholder="Sifreyi tekrar gir"/>
+      <div id="reg-err" class="err" style="display:none;"></div>
+      <button class="btn primary" style="width:100%;margin-top:4px;" onclick="doRegister()">Kayit Ol</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div id="screen-menu" class="screen">
+  <div class="user-bar">
+    <span>Hos geldin, <strong id="user-name-display">—</strong></span>
+    <button class="btn ghost" onclick="doLogout()">Cikis</button>
+  </div>
+  <div class="menu-tabs">
+    <button class="menu-tab" id="mtab-main" onclick="switchMenuTab('main')">Karisik Oyna</button>
+    <button class="menu-tab" id="mtab-words" onclick="switchMenuTab('words')">Kelimeler</button>
+    <button class="menu-tab" id="mtab-chapters" onclick="switchMenuTab('chapters')">Bolumler</button>
+  </div>
+  <div id="pane-main" style="display:none;">
+    <div class="karisik-row">
+      <div class="karisik-btn" onclick="startRandom(10)">10 Karisik Kart</div>
+      <div class="karisik-btn" onclick="startRandom(null)">Tum Kelimeleri Karistir</div>
+    </div>
+  </div>
+  <div id="pane-words" style="display:none;">
+    <input class="wl-search" id="wl-search" type="text" placeholder="Kelime ara..." oninput="renderWordList()" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <div id="word-list"></div>
+  </div>
+  <div id="pane-chapters" style="display:none;">
+    <div class="bolum-info">Her bolumde maksimum iki hata hakkini kullanabilirsin.</div>
+    <div id="spinner-chapters" class="spinner">Yukleniyor...</div>
+    <div class="chapter-list" id="chapter-list" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- OYUN -->
+<div id="screen-game" class="screen">
+  <div class="prog"><div class="progf" id="progf"></div></div>
+  <div class="topbar">
+    <span id="counter">1/1</span>
+    <span>Puan: <strong id="lscore">0</strong></span>
+    <button class="btn ghost" onclick="goMenu()">Menu</button>
+  </div>
+  <div class="card-wrap" onclick="flipCard()">
+    <div class="card-inner" id="cinner">
+      <div class="cface front">
+        <div class="clabel">Kelime</div>
+        <div class="cword" id="cword">—</div>
+        <div class="csub" id="csub"></div>
+      </div>
+      <div class="cface back">
+        <div class="clabel">Anlamlar</div>
+        <div class="cdefs" id="cdefs"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fhint" id="fhint">Karti cevirmek icin tikla</div>
+  <div id="aarea">
+    <div class="albl" id="albl">En az 2 anlami yaz — her cevabi Enter ile ekle:</div>
+    <div class="arow">
+      <input class="ainp" id="ainp" type="text" placeholder="Cevap yaz..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <button class="btn" onclick="addAns()">Ekle</button>
+    </div>
+    <div class="tags" id="atags"></div>
+    <div class="fb" id="afb"></div>
+    <div class="legend">
+      <span><span class="ldot" style="background:var(--correct)"></span>Dogru</span>
+      <span><span class="ldot" style="background:var(--near)"></span>Yakin</span>
+      <span><span class="ldot" style="background:var(--wrong)"></span>Yanlis</span>
+    </div>
+  </div>
+  <div class="bottom-row">
+    <div class="navrow">
+      <button class="btn" onclick="skipCard()">Atla</button>
+      <button class="btn primary" id="btnnext" onclick="nextCard()" disabled>Sonraki</button>
+    </div>
+    <div id="tr-wrap" style="display:none;">
+      <button class="tr-toggle-btn" id="tr-toggle" onclick="toggleTr()">
+        <span>Turkce anlami goster</span><span class="arr">v</span>
+      </button>
+      <div class="tr-body" id="tr-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SONUC -->
+<div id="screen-result" class="screen">
+  <div id="complete-banner" class="complete-banner" style="display:none;">Bolum tamamlandi! Sonraki bolum acildi.</div>
+  <h2>Tur Bitti!</h2>
+  <div class="sgrid">
+    <div class="scard"><div class="snum" id="rscore">0</div><div class="slbl">Toplam Puan</div></div>
+    <div class="scard"><div class="snum" id="rcorrect">0</div><div class="slbl">Tam Dogru</div></div>
+    <div class="scard"><div class="snum" id="rpartial">0</div><div class="slbl">Kismen</div></div>
+  </div>
+  <div id="rlist"></div>
+  <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+    <button class="btn primary" onclick="restartGame()">Tekrar Oyna</button>
+    <button class="btn" onclick="goMenu()">Menu</button>
+  </div>
+</div>
+
+</div>
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getFirestore,doc,getDoc,setDoc,updateDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+const firebaseConfig={apiKey:"AIzaSyD1U5yl2NNcnu7hWUco1nZA1C4MSAYC7Ao",authDomain:"flash-card-game-b6656.firebaseapp.com",projectId:"flash-card-game-b6656",storageBucket:"flash-card-game-b6656.firebasestorage.app",messagingSenderId:"702357251050",appId:"1:702357251050:web:b6d8d52d9f67ce0307c893"};
+const fireApp=initializeApp(firebaseConfig);
+const auth=getAuth(fireApp);
+const db=getFirestore(fireApp);
+function toEmail(u){return u.toLowerCase().replace(/[^a-z0-9]/g,'')+'@flashcard.app';}
+
+const CHAPTERS=[
+{id:1,title:"Metin 1 - Johannes Gutenberg",cards:[
+{word:"Kindheit",meanings:["Kinderjahre","fruhe Lebensjahre"],tr:"Cocukluk"},
+{word:"Verbringen",meanings:["aufhalten"],tr:"Gecirmek"},
+{word:"Jugend",meanings:["Pubertat","Jugendzeit"],tr:"Genclik"},
+{word:"Gestorben",meanings:["verstorben","Tod","hingeschieden","seine Leben verlieren"],tr:"Olmus"},
+{word:"Geboren",meanings:["geburtig","zur Welt gekommen","auf Welt gekommen"],tr:"Dogmus"},
+{word:"Annehmen",meanings:["empfangen","akzeptieren","entgegen nehmen","vermuten","davon ausgehen","fur wahrscheinlich halten"],tr:"Kabul etmek / Varsaymak"},
+{word:"Alteste",meanings:["fruher"],tr:"En eski"},
+{word:"Beruhmte",meanings:["bekannt","prominent","namhaft","vertraut","popular","hochgestellt","beliebt"],tr:"Unlu"},
+{word:"Nachweislich",meanings:["beweisbar","erwiesenermaßen","belegt"],tr:"Kanitlanabilir"},
+{word:"Buchdruck",meanings:["Druckkunst","Lettern","Druckwesen"],tr:"Kitap baskisi"},
+{word:"Universitat",meanings:["Hochschule","Lehranstalt"],tr:"Universite"},
+{word:"Druckverfahren",meanings:["Druckmethode","Drucktechnik","Druckvorgang"],tr:"Baski yontemi"},
+{word:"Erfinder",meanings:["Entdecker","Urheber","Schopfer"],tr:"Mucit"},
+{word:"Vermutlich",meanings:["wahrscheinlich","wohl","moglicherweise","anscheinend","voraussichtlich","mutmaßlich","angenommen","eventuell"],tr:"Muhtemelen"},
+{word:"Jedoch",meanings:["aber","hingegen","dennoch"],tr:"Ancak"},
+{word:"Druckerzeugnis",meanings:["Druckprodukt","Drucksachen"],tr:"Basilı urun"},
+{word:"Erscheinen",meanings:["publizieren","herausgeben","veroffentlichen","herausbringen"],tr:"Yayimlanmak"},
+]},
+{id:2,title:"Metin 2 - Felsefi Antropoloji",cards:[
+{word:"Untersuchen",meanings:["analysieren","erforschen","uberprufen","recherchieren","kontrollieren"],tr:"Incelemek"},
+{word:"Sinn",meanings:["Bedeutung","Verstand","Geist"],tr:"Anlam / Akil"},
+{word:"Zweck",meanings:["Ziel"],tr:"Amac"},
+{word:"Anthropologie",meanings:["Menschenkunde","Humanwissenschaft"],tr:"Antropoloji"},
+{word:"Blosz",meanings:["nur"],tr:"Sadece"},
+{word:"Spezifika",meanings:["Besonderheit","Merkmale","Eigenheit"],tr:"Ozellikler"},
+{word:"Existenz",meanings:["Dasein","Bestand"],tr:"Varoluş"},
+{word:"Empirisch",meanings:["praktisch","experimentell","praxisbezogen","beobachtungsbasierend"],tr:"Ampirik"},
+{word:"Entwickeln",meanings:["hervorbringen","gestalten","entfalten","aufbauen","konzipieren","ausarbeiten","ausbilden","entstehen"],tr:"Gelistirmek"},
+{word:"Disziplin",meanings:["Bereich","Fachgebiet"],tr:"Disiplin / Alan"},
+{word:"Zuhilfenahme",meanings:["Verwendung","Inanspruchnahme","mittels","Nutzung","Mithilfe"],tr:"Kullanma / Yardimini alma"},
+{word:"Versuchen",meanings:["probieren","anstreben","sich bemuhen","streben"],tr:"Denemek"},
+{word:"Erkenntnis",meanings:["Befunde","Einsicht"],tr:"Bulgu / Kavrayis"},
+{word:"Begrunder",meanings:["Grunder","Entwickler","Urheber","Vordenker"],tr:"Kurucu"},
+{word:"Zentral",meanings:["Mittelpunkt","Wichtig","Hauptdenker"],tr:"Merkezi / Onemli"},
+{word:"Autoren",meanings:["Schreiber","Schriftsteller","Poet","Verfasser"],tr:"Yazarlar"},
+{word:"Betonen",meanings:["hervorheben","unterstreichen","markieren"],tr:"Vurgulamak"},
+{word:"Defizit",meanings:["Fehlende","Mangel"],tr:"Eksiklik"},
+{word:"Kompensieren",meanings:["ersetzen","ausgleichen","neutralisieren"],tr:"Telafi etmek"},
+]},
+{id:3,title:"Metin 5 - Alzheimer Hastaligi",cards:[
+{word:"Krankheit",meanings:["leiden","Erkrankungen","Beschwerde"],tr:"Hastalik"},
+{word:"Fortschreitend",meanings:["zunehmend","weiterentwickelnd","progressiv","kontinuierlich","voranschreitend"],tr:"Ilerleyici"},
+{word:"Schrumpfung",meanings:["Abnahme","Reduktion","Minderung","Ruckbildung"],tr:"Kuculme"},
+{word:"Schwierig",meanings:["kompliziert","erschwerend","anspruchsvoll","hart","muhevoll","muhsam","anstrengend"],tr:"Zor"},
+{word:"Problem",meanings:["Herausforderung"],tr:"Sorun"},
+{word:"Symptome",meanings:["Anzeichen","Merkmale","Hinweise","Krankheitszeichen"],tr:"Belirtiler"},
+{word:"Diagnose",meanings:["Feststellen","Befund","arztliche Beurteilung","Erkennung","Untersuchungsergebnisse","arztliche Resultat"],tr:"Teshis"},
+]},
+{id:4,title:"Metin 6 - Malzemeler ve Teknoloji",cards:[
+{word:"Deutlich",meanings:["klar","eindeutig","offensichtlich","explizit","erkennbar","augenfällig","ausgeprägt","verständlich"],tr:"Acik / Belirgin"},
+{word:"Benennung",meanings:["Bezeichnung","Name","Beteiligung"],tr:"Isimlendirme"},
+{word:"Fahigkeiten",meanings:["Begabung","Kompetenz","Fertigkeiten","Qualifikation"],tr:"Yetenekler"},
+{word:"Wesentlich",meanings:["erheblich","massgeblich","entscheidend","grundlegend","signifikant","wichtig","fundamental","zentral","bedeutend","notwendig","elementar"],tr:"Onemli / Temel"},
+{word:"Aktuell",meanings:["derzeit","momentan","gegenwärtig","jetzt","modern","neu","zeitgemäß"],tr:"Guncel"},
+]},
+{id:5,title:"Metin 7 - Ozon Tabakasi",cards:[
+{word:"Indiz",meanings:["Hinweis","Merkmal","Beweis"],tr:"Ipucu / Kanit"},
+{word:"Ursache",meanings:["Grund","Ausloser"],tr:"Neden / Sebep"},
+{word:"Gering",meanings:["kaum","klein","niedrig","schwach","wenig"],tr:"Az / Dusuk"},
+{word:"Anhaltend",meanings:["andauernd","stetig","dauerhaft","fortwährend","standig","fortlaufend","konstant","permanent"],tr:"Surekli"},
+{word:"Zerstorung",meanings:["Zusammenbruch","Vernichtung","Verwustung","Beschadigung","Demolieren"],tr:"Yikim"},
+{word:"Destruktion",meanings:["Verfall","Zerfall","Abbau","Ausmerzung"],tr:"Cokus / Yikim"},
+]},
+{id:6,title:"Metin 9 - Su Kitligi ve Barajlar",cards:[
+{word:"Gerade",meanings:["besonders","ausgerechnet","genau"],tr:"Tam olarak"},
+{word:"Trockener",meanings:["durre","arid","regenarm"],tr:"Kurak"},
+{word:"Gebiet",meanings:["Region","Bereich","Landstrich"],tr:"Bolge"},
+{word:"Katastrophal",meanings:["verheerend","fatal","zerstörerisch"],tr:"Felaket boyutunda"},
+{word:"Fuhren zu",meanings:["verursachen","bewirken","auslosen"],tr:"Yol acmak"},
+{word:"Wachsen",meanings:["zunehmen","steigen","anwachsen"],tr:"Artmak / Buyumek"},
+{word:"Erhoht",meanings:["gesteigert","vermehrt","hoher"],tr:"Artirilmis"},
+{word:"Zunehmend",meanings:["immer mehr","fortlaufend","progressiv"],tr:"Giderek artan"},
+{word:"Errichtung",meanings:["Aufbau","Grundung","Erstellung"],tr:"Insa / Kurma"},
+{word:"Gigantisch",meanings:["riesig","enorm","gewaltig"],tr:"Dev / Muazzam"},
+{word:"Zu erwahnen",meanings:["nennen","anfuhren","erwahnenswert finden"],tr:"Belirtmek"},
+{word:"Streit",meanings:["Konflikt","Auseinandersetzung","Disput"],tr:"Anlasmazlik"},
+{word:"Anliegerstaaten",meanings:["Nachbarstaaten","angrenzende Staaten","Uferstaaten"],tr:"Komsu devletler"},
+{word:"Fluss",meanings:["Strom","Gewasser","Fließgewasser"],tr:"Nehir"},
+{word:"Protest einlegen",meanings:["Einspruch haben","Widerstand leisten","Beschwerde einreichen"],tr:"Itiraz etmek"},
+{word:"Unterbinden",meanings:["stoppen","verhindern","blockieren"],tr:"Engellemek"},
+]},
+{id:7,title:"Metin 10 - Kapitalizm ve Kalkinma",cards:[
+{word:"Erfolgreich",meanings:["gelungen","siegreich"],tr:"Basarili"},
+{word:"Rezept",meanings:["Methode","Vorgehensweise","Strategie"],tr:"Yontem / Strateji"},
+{word:"Sich widersetzen",meanings:["sich wehren","Widerstand leisten","opponieren"],tr:"Karsi cikmak"},
+{word:"Produzieren",meanings:["herstellen","fertigen","erzeugen"],tr:"Uretmek"},
+{word:"Bedingungen",meanings:["Voraussetzungen","Umstande","Konditionen"],tr:"Kosullar"},
+{word:"Gestalten",meanings:["formen","organisieren","einrichten"],tr:"Sekillendirmek"},
+{word:"Unternehmen",meanings:["Firmen","Konzerne","Betriebe"],tr:"Sirketler"},
+{word:"Binden an",meanings:["koppeln an","knupfen an","abhangig machen von"],tr:"Baglamak"},
+{word:"Beteiligen",meanings:["teilhaben lassen","einbeziehen","mitwirken lassen"],tr:"Dahil etmek"},
+{word:"Zugang",meanings:["Zutritt","Zugriff","Zugangsmoglichkeit"],tr:"Erisim"},
+{word:"Erwerben",meanings:["erlangen","gewinnen","sich aneignen"],tr:"Kazanmak"},
+{word:"Investoren",meanings:["Geldgeber","Kapitalgeber","Anleger"],tr:"Yatirimcilar"},
+{word:"Gewinne",meanings:["Profite","Ertrage","Einnahmen"],tr:"Karlar"},
+{word:"Garantieren",meanings:["zusichern","gewahrleisten","versprechen"],tr:"Garanti etmek"},
+{word:"Ankurbeln",meanings:["fordern","beleben","vorantreiben"],tr:"Canlandirmak"},
+{word:"Entwicklung",meanings:["Fortschritt","Wachstum","Entwicklungsschub"],tr:"Gelisme"},
+]},
+{id:8,title:"Metin 13 - Tarih Bilimi",cards:[
+{word:"Vergangenheit",meanings:["Vorzeit","Historie","alt","fruhere","vorbei"],tr:"Gecmis"},
+{word:"Erforschen",meanings:["untersuchen","analysieren","ergrunden","ermitteln","herausfinden","erkunden","prufen","kontrollieren","recherchieren","durchleuchten"],tr:"Arastirmak"},
+{word:"Sowie",meanings:["und","ebenso","nebst","zudem","ferner"],tr:"Ve ayrica"},
+{word:"Herausarbeiten",meanings:["verdeutlichen","herausstellen","herauskristallisieren"],tr:"Ortaya cikarmak"},
+{word:"Moglichst",meanings:["soweit wie moglich","bestmoglich"],tr:"Mumkun oldugunca"},
+{word:"Idee",meanings:["Einfall","Gedanke","Auffassung","Vorschlag"],tr:"Fikir"},
+]},
+{id:9,title:"Metin 14 - Avrupa Birligi",cards:[
+{word:"Anstehende",meanings:["bevorstehende","kunftige","in Zukunft geschehen","nahend"],tr:"Yaklasan"},
+{word:"Erweiterung",meanings:["Zunahme","Ausbau","Ausnehmung","Erhohung","Vergrosserung","Expansion"],tr:"Genisleme"},
+{word:"Umfassend",meanings:["umfangreich","vollstandig","ausgiebig","ausfuhrlich"],tr:"Kapsamli"},
+{word:"Vielseitig",meanings:["reichhaltig","vielfaltig","allseitig"],tr:"Cok yonlu"},
+{word:"Ausstellung",meanings:["Prasentation","Schau","Exponate","Darbietung","Vorzeigung"],tr:"Sergi"},
+{word:"Verbundenheit",meanings:["Zusammengehorigkeit","Bindung","Zugehorigkeit","Nahe"],tr:"Baglilik"},
+{word:"Wertvoll",meanings:["unverzichtbar","unersatzlich","kostbar","hochwertig","bedeutend","Schatz"],tr:"Degerli"},
+]},
+{id:10,title:"Metin 15 - Ingiltere ve Koloniler",cards:[
+{word:"Verzichten",meanings:["aufgeben","entsagen","unterlassen"],tr:"Vazgecmek"},
+{word:"Aufbauen",meanings:["errichten","grunden","entwickeln"],tr:"Kurmak / Insa etmek"},
+{word:"Konkurrieren",meanings:["wetteifern","mithalten"],tr:"Rekabet etmek"},
+{word:"Exportieren",meanings:["ausfuhren","verkaufen ins Ausland","liefern"],tr:"Ihrac etmek"},
+{word:"Einfuhren",meanings:["importieren","einbringen","beziehen"],tr:"Ithal etmek"},
+{word:"Erzeugnisse",meanings:["Produkte","Guter","Waren"],tr:"Urunler / Mallar"},
+{word:"Getreide",meanings:["Korn","Saatgut","Feldfrucht"],tr:"Tahil"},
+]},
+{id:11,title:"Metin 17 - Plastikler",cards:[
+{word:"Hart",meanings:["streng","fest","solide","widerstandsfähig"],tr:"Sert"},
+{word:"Weich",meanings:["flexibel","soft","biegsam","flauschig","nachgiebig","geschmeidig"],tr:"Yumusak"},
+{word:"Elastisch",meanings:["dehnbar","biegbar"],tr:"Esnek"},
+{word:"Struktur",meanings:["Aufbau","Anlage","Form","Ordnung"],tr:"Yapi"},
+{word:"Basieren",meanings:["beruhen","grunden","stutzen"],tr:"Dayanmak"},
+{word:"Produktion",meanings:["Herstellung","Fertigung","Ware","Erzeugung","Anfertigung","Fabrikation"],tr:"Uretim"},
+{word:"Menge",meanings:["Anzahl","Quantitat","Masse","Volumen","Umfang","Kontingenz"],tr:"Miktar"},
+{word:"Preisgunstig",meanings:["billig","kosteneffizient","preiswert","gunstig"],tr:"Uygun fiyatli"},
+{word:"Traditionell",meanings:["herkommlich","konventionell","uberliefert","kulturell bedingt","klassisch"],tr:"Geleneksel"},
+{word:"Kraftstoff",meanings:["Treibstoff","Brennstoff"],tr:"Yakit"},
+{word:"Zulassen",meanings:["erlauben","ermoglichen","gestatten"],tr:"Izin vermek"},
+{word:"Moglichkeiten",meanings:["Chancen","Optionen","Wege"],tr:"Olanaklar"},
+{word:"Verdrangen",meanings:["ersetzen","ablosen","zuruckdrangen"],tr:"Yerini almak"},
+{word:"Steigen",meanings:["zunehmen","wachsen","sich erhohen"],tr:"Artmak / Yukselmek"},
+]},
+{id:12,title:"Metin 18 - Konsantrasyon ve Stres",cards:[
+{word:"Interesse",meanings:["Neugier","Aufmerksamkeit","Augenmerk","Begeisterung","Anteilnahme","Motivation"],tr:"Ilgi / Merak"},
+{word:"Themen",meanings:["Gegenstand","Sache","Inhalt","Stoff","Thematik"],tr:"Temalar / Konular"},
+{word:"Vermuten",meanings:["glauben","vorausschauen","vorhersagen"],tr:"Varsaymak"},
+{word:"Zusammenhang",meanings:["Beziehung","Verbindung","Bezug","Kontext","Verhaltnis","Verknupfung"],tr:"Baglanti / Iliski"},
+{word:"Aufmerksamkeit",meanings:["Konzentration","Beachtung","Achtsamkeit","Fokus","Interesse","Zuwendung","Achtung"],tr:"Dikkat"},
+{word:"Gering",meanings:["niedrig","schwach","minimal"],tr:"Az / Dusuk"},
+{word:"Hilfreich",meanings:["nutzlich","forderlich","sinnvoll"],tr:"Yararli"},
+{word:"Haufig",meanings:["oft","vielfach","regelmäßig"],tr:"Sik sik"},
+{word:"Situation",meanings:["Lage","Zustand","Umstand"],tr:"Durum"},
+{word:"Benotigen",meanings:["brauchen","erfordern","voraussetzen"],tr:"Ihtiyac duymak"},
+{word:"Gesteigert",meanings:["erhoht","verbessert","verstärkt"],tr:"Artirilmis"},
+{word:"Trainierbar",meanings:["ubbar","erlernbar","ausbaubar"],tr:"Egitilebilir"},
+{word:"Leichter",meanings:["einfacher","muheloser","schneller"],tr:"Daha kolay"},
+]},
+{id:13,title:"Metin 23 - Paralı Askerler",cards:[
+{word:"Interesse",meanings:["Wunsch","Belang"],tr:"Cıkar / Istek"},
+{word:"Streitkrafte",meanings:["Truppen","Armee"],tr:"Silahli kuvvetler"},
+{word:"Heute",meanings:["heutzutage","zur Zeit"],tr:"Bugun / Gunumuzde"},
+{word:"Bezeichnen",meanings:["nennen","definieren"],tr:"Adlandirmak"},
+{word:"Land",meanings:["Nation","Staat"],tr:"Ulke / Devlet"},
+{word:"Verschieden",meanings:["unterschiedlich","divers"],tr:"Cesitli / Farkli"},
+]},
+{id:14,title:"Metin 24 - Gunes Panelleri",cards:[
+{word:"Meist",meanings:["oft","uberwiegend"],tr:"Cogunlukla"},
+{word:"Bestehen",meanings:["stammen","entstehen"],tr:"Olusmak"},
+{word:"Vermindern",meanings:["reduzieren","senken"],tr:"Azaltmak"},
+{word:"Zunachst",meanings:["vorerst","zuerst","erst"],tr:"Oncelikle"},
+{word:"Erstmals",meanings:["zum ersten Mal","erstmalig"],tr:"Ilk kez"},
+{word:"Steigen",meanings:["erhohen","zunehmend","vermehren","ansteigen","wachsen"],tr:"Artmak"},
+{word:"Preiswert",meanings:["gunstig","billig"],tr:"Ucuz"},
+{word:"Allerdings",meanings:["sondern","aber"],tr:"Ancak"},
+{word:"Bisher",meanings:["bis jetzt","bislang"],tr:"Simdiye kadar"},
+]},
+];
+
+const ALL_CARDS=CHAPTERS.flatMap(ch=>ch.cards);
+let currentUser=null,userProgress={},currentChapter=null,isRandomMode=false;
+let cards=[],cur=0,score=0,results=[],typed=[],answered=false,flipped=false;
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function norm(s){return s.trim().toLowerCase().replace(/\s+/g,' ');}
+function isMatch(a,m){return norm(a)===norm(m);}
+function levenshtein(a,b){const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
+function isNear(a,m){const na=norm(a),nb=norm(m);if(na===nb)return false;const maxD=nb.length<=5?1:2;if(levenshtein(na,nb)<=maxD)return true;if(na.length>=4&&nb.length>=4&&nb.startsWith(na.slice(0,4)))return true;return false;}
+function tagStatus(a,meanings){if(meanings.some(m=>isMatch(a,m)))return'ok';if(meanings.some(m=>isNear(a,m)))return'near';return'fail';}
+function required(c){return c.meanings.length===1?1:2;}
+
+window.switchAuthTab=function(t){document.getElementById('tab-login').className='auth-tab'+(t==='login'?' sel':'');document.getElementById('tab-register').className='auth-tab'+(t==='register'?' sel':'');document.getElementById('auth-login').style.display=t==='login'?'block':'none';document.getElementById('auth-register').style.display=t==='register'?'block':'none';};
+
+window.doRegister=async function(){
+  const u=document.getElementById('reg-user').value.trim();
+  const p=document.getElementById('reg-pass').value;
+  const p2=document.getElementById('reg-pass2').value;
+  const err=document.getElementById('reg-err');
+  err.style.display='none';
+  if(!u||!p){err.style.display='block';err.textContent='Kullanici adi ve sifre gerekli.';return;}
+  if(p!==p2){err.style.display='block';err.textContent='Sifreler eslesmiyor.';return;}
+  if(p.length<6){err.style.display='block';err.textContent='Sifre en az 6 karakter olmali.';return;}
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,toEmail(u),p);
+    await updateProfile(cred.user,{displayName:u});
+    await setDoc(doc(db,'users',cred.user.uid),{name:u,progress:{}});
+  }catch(e){err.style.display='block';err.textContent=e.code==='auth/email-already-in-use'?'Bu kullanici adi alinmis.':'Bir hata olustu.';}
+};
+
+window.doLogin=async function(){
+  const u=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-err');
+  err.style.display='none';
+  if(!u||!p){err.style.display='block';err.textContent='Kullanici adi ve sifre gir.';return;}
+  try{await signInWithEmailAndPassword(auth,toEmail(u),p);}
+  catch(e){err.style.display='block';err.textContent='Kullanici adi veya sifre hatali.';}
+};
+
+window.doLogout=async function(){await signOut(auth);};
+
+async function loadProgress(){try{const snap=await getDoc(doc(db,'users',currentUser.uid));userProgress=snap.exists()?(snap.data().progress||{}):{};} catch(e){userProgress={};}}
+async function saveProgress(){try{await updateDoc(doc(db,'users',currentUser.uid),{progress:userProgress});}catch(e){}}
+function isUnlocked(idx){if(idx===0)return true;return userProgress[CHAPTERS[idx-1].id]?.completed===true;}
+function isDone(ch){return userProgress[ch.id]?.completed===true;}
+
+async function showMenu(){
+  show('screen-menu');
+  document.getElementById('user-name-display').textContent=currentUser.displayName||'—';
+  // Hicbir sekme secili gelmesin
+  ['main','words','chapters'].forEach(id=>{
+    document.getElementById('mtab-'+id).className='menu-tab';
+    document.getElementById('pane-'+id).style.display='none';
+  });
+}
+
+window.switchMenuTab=function(t){
+  ['main','words','chapters'].forEach(id=>{
+    document.getElementById('mtab-'+id).className='menu-tab'+(t===id?' sel':'');
+    document.getElementById('pane-'+id).style.display=t===id?'block':'none';
+  });
+  if(t==='words')renderWordList();
+  if(t==='chapters')renderChapters();
+};
+
+window.renderWordList=function(){
+  const q=(document.getElementById('wl-search').value||'').toLowerCase();
+  let html='';
+  CHAPTERS.forEach(ch=>{
+    const filtered=ch.cards.filter(c=>!q||c.word.toLowerCase().includes(q)||c.meanings.some(m=>m.toLowerCase().includes(q))||(c.tr&&c.tr.toLowerCase().includes(q)));
+    if(!filtered.length)return;
+    html+=`<div class="wl-group">${ch.title}</div>`;
+    filtered.forEach(c=>{html+=`<div class="wl-item"><span class="wl-word">${c.word}</span>${c.tr?`<span class="wl-tr">${c.tr}</span>`:''}<span class="wl-defs">${c.meanings.join(', ')}</span></div>`;});
+  });
+  document.getElementById('word-list').innerHTML=html||'<p style="color:var(--muted);font-size:14px;margin-top:8px;">Sonuc bulunamadi.</p>';
+};
+
+async function renderChapters(){
+  document.getElementById('spinner-chapters').style.display='block';
+  document.getElementById('chapter-list').style.display='none';
+  await loadProgress();
+  document.getElementById('chapter-list').innerHTML=CHAPTERS.map((ch,idx)=>{
+    const unlocked=isUnlocked(idx),done=isDone(ch);
+    const best=userProgress[ch.id]?.bestScore||0;
+    const pct=ch.cards.length>0?Math.round((best/ch.cards.length)*100):0;
+    const bc=done?'done':!unlocked?'lock':'open';
+    const bt=done?'Tamamlandi':!unlocked?'Kilitli':'Acik';
+    return`<div class="chapter-card${done?' done':''}${!unlocked?' locked':''}" onclick="${unlocked?`startChapter(${ch.id})`:''}">
+      <div class="ch-top">
+        <div>
+          <div class="ch-num">Bolum ${ch.id}</div>
+          <div class="ch-title">${ch.title}</div>
+          <div class="ch-count">${ch.cards.length} kelime${done?` — En iyi: ${best}/${ch.cards.length}`:''}</div>
+        </div>
+        <span class="ch-badge ${bc}">${bt}</span>
+      </div>
+      ${unlocked?`<div class="ch-prog"><div class="ch-prog-fill" style="width:${pct}%"></div></div>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('spinner-chapters').style.display='none';
+  document.getElementById('chapter-list').style.display='flex';
+}
+
+window.goMenu=function(){showMenu();};
+
+window.startRandom=function(n){
+  isRandomMode=true;currentChapter=null;
+  const sh=[...ALL_CARDS].sort(()=>Math.random()-.5);
+  cards=n?sh.slice(0,Math.min(n,sh.length)):sh;
+  cur=0;score=0;results=[];show('screen-game');loadCard();
+};
+
+window.startChapter=function(id){
+  isRandomMode=false;
+  currentChapter=CHAPTERS.find(c=>c.id===id);
+  cards=[...currentChapter.cards].sort(()=>Math.random()-.5);
+  cur=0;score=0;results=[];show('screen-game');loadCard();
+};
+
+function loadCard(){
+  flipped=false;answered=false;typed=[];
+  document.getElementById('cinner').classList.remove('fl');
+  document.getElementById('ainp').value='';
+  document.getElementById('atags').innerHTML='';
+  document.getElementById('afb').textContent='';
+  document.getElementById('afb').className='fb';
+  document.getElementById('btnnext').disabled=true;
+  document.getElementById('aarea').style.display='block';
+  document.getElementById('fhint').textContent='Karti cevirmek icin tikla';
+  document.getElementById('tr-toggle').className='tr-toggle-btn';
+  document.getElementById('tr-body').className='tr-body';
+  const c=cards[cur];
+  document.getElementById('cword').textContent=c.word;
+  document.getElementById('csub').textContent=c.meanings.length+' anlam';
+  document.getElementById('counter').textContent=(cur+1)+'/'+cards.length;
+  document.getElementById('progf').style.width=((cur/cards.length)*100)+'%';
+  document.getElementById('lscore').textContent=score;
+  document.getElementById('cdefs').innerHTML=c.meanings.map(m=>`<div class="ditem"><div class="ddot"></div><span>${m}</span></div>`).join('');
+  if(c.tr){document.getElementById('tr-wrap').style.display='block';document.getElementById('tr-body').textContent=c.tr;}
+  else document.getElementById('tr-wrap').style.display='none';
+  document.getElementById('albl').textContent=required(c)===1?'Dogru anlami yaz ve Enter a bas:':'En az 2 anlami yaz — her cevabi Enter ile ekle:';
+  const inp=document.getElementById('ainp');inp.focus();
+  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();addAns();}};
+}
+
+window.flipCard=function(){flipped=!flipped;document.getElementById('cinner').classList.toggle('fl',flipped);document.getElementById('fhint').textContent=flipped?'Geri cevirmek icin tikla':'Karti cevirmek icin tikla';};
+window.toggleTr=function(){const btn=document.getElementById('tr-toggle'),body=document.getElementById('tr-body'),open=body.classList.contains('open');btn.className='tr-toggle-btn'+(open?'':' open');body.className='tr-body'+(open?'':' open');};
+
+window.addAns=function(){
+  if(answered)return;
+  const inp=document.getElementById('ainp');
+  const val=inp.value.trim();if(!val)return;
+  val.split(',').map(p=>p.trim()).filter(p=>p).forEach(p=>{if(!typed.some(t=>norm(t)===norm(p)))typed.push(p);});
+  inp.value='';renderTags();checkLive();
+};
+
+function renderTags(){
+  const c=cards[cur];
+  const html=typed.map(a=>{const s=tagStatus(a,c.meanings);return`<span class="${s==='ok'?'tok':s==='near'?'tnear':'tfail'}">${a}</span>`;}).join('');
+  document.getElementById('atags').innerHTML=html;
+}
+
+function checkLive(){
+  if(answered)return;
+  const c=cards[cur];
+  const matched=c.meanings.filter(m=>typed.some(a=>isMatch(a,m)));
+  const nearOnly=typed.some(a=>tagStatus(a,c.meanings)==='near');
+  const req=required(c);
+  const fb=document.getElementById('afb');
+  if(matched.length>=req){
+    const full=matched.length>=c.meanings.length;const pts=full?c.meanings.length:matched.length;
+    fb.textContent=full?`Mukemmel! Tum anlamlari buldun. +${pts} puan`:`${matched.length}/${c.meanings.length} anlam bulundu. +${pts} puan`;
+    fb.className='fb good';document.getElementById('btnnext').disabled=false;
+  }else if(nearOnly&&matched.length<req){fb.textContent='Cok yakindın! Yazimi kontrol et.';fb.className='fb near';}
+  else if(typed.length>0&&matched.length===0){fb.textContent='Eslesen anlam yok. Tam kelimeyi yaz.';fb.className='fb';}
+  else if(matched.length>0&&matched.length<req){fb.textContent=`${matched.length} anlam bulundu, en az ${req} gerekli.`;fb.className='fb';}
+  else{fb.textContent='';fb.className='fb';}
+}
+
+function finishCard(skipped){
+  if(answered)return;answered=true;
+  const c=cards[cur];
+  const matched=c.meanings.filter(m=>typed.some(a=>isMatch(a,m)));
+  const req=required(c);
+  let pts=0,status='fail';
+  if(!skipped){if(matched.length>=c.meanings.length){pts=c.meanings.length;status='ok';}else if(matched.length>=req){pts=matched.length;status='part';}}
+  score+=pts;results.push({word:c.word,meanings:c.meanings,status,pts});
+  document.getElementById('lscore').textContent=score;
+  document.getElementById('btnnext').disabled=false;
+  if(!flipped)flipCard();
+  document.getElementById('aarea').style.display='none';
+}
+
+window.skipCard=function(){finishCard(true);nextCard();};
+window.nextCard=function(){if(!answered){finishCard(false);return;}cur++;if(cur>=cards.length){showResults();return;}loadCard();};
+window.restartGame=function(){cur=0;score=0;results=[];cards=[...cards].sort(()=>Math.random()-.5);show('screen-game');loadCard();};
+
+async function showResults(){
+  document.getElementById('progf').style.width='100%';
+  const ok=results.filter(r=>r.status==='ok').length;
+  const part=results.filter(r=>r.status==='part').length;
+  const wrong=results.filter(r=>r.status==='fail').length;
+  document.getElementById('rscore').textContent=score;
+  document.getElementById('rcorrect').textContent=ok;
+  document.getElementById('rpartial').textContent=part;
+  document.getElementById('rlist').innerHTML=results.map(r=>{
+    const bc=r.status==='ok'?'bok':r.status==='part'?'bpart':'bfail';
+    const bt=r.status==='ok'?'Tam':r.status==='part'?'Kismen':'Atlandi';
+    return`<div class="ritem"><span class="bdg ${bc}">${bt}</span><span class="rword">${r.word}</span><span class="rdefs">${r.meanings.join(', ')}</span><span class="rpts">${r.pts>0?'+'+r.pts+' puan':'0 puan'}</span></div>`;
+  }).join('');
+  let justCompleted=false;
+  if(!isRandomMode&&currentChapter){
+    const chId=currentChapter.id;
+    const prev=userProgress[chId]||{};
+    const newBest=Math.max(score,prev.bestScore||0);
+    const completed=wrong<=2;
+    const wasDone=prev.completed===true;
+    justCompleted=completed&&!wasDone;
+    userProgress[chId]={completed:completed||wasDone,bestScore:newBest};
+    await saveProgress();
+  }
+  document.getElementById('complete-banner').style.display=justCompleted?'block':'none';
+  show('screen-result');
+}
+
+onAuthStateChanged(auth,async user=>{
+  if(user){currentUser=user;await showMenu();}
+  else{currentUser=null;show('screen-auth');}
+});
+</script>
+</body>
+</html>
