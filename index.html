@@ -5,166 +5,202 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Almanca Flash Kartlar</title>
 <style>
-:root{--bg:#f7f6f3;--surface:#fff;--surface2:#f0ede8;--text:#1a1a1a;--muted:#6b6860;--border:#ddd9d0;--correct:#2e7d57;--correct-bg:#4caf8320;--wrong:#a33030;--wrong-bg:#e05a5a20;--near:#8a5c00;--near-bg:#f5a62328;--partial-bg:#f5a62320;--accent:#2563c7;--tr-color:#7c3aed;--radius:12px;--rsm:8px;}
-@media(prefers-color-scheme:dark){:root{--bg:#0e0e0f;--surface:#1c1c1f;--surface2:#161618;--text:#f0ece2;--muted:#6b6860;--border:#2a2a2e;--near:#e8a020;--near-bg:#f5a62322;--accent:#60a5fa;--tr-color:#a78bfa;}}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;padding:24px 16px 60px;}
-#app{width:100%;max-width:700px;}
-.screen{display:none;}.screen.active{display:block;}
-h2{font-size:18px;font-weight:500;margin-bottom:10px;}
-input[type=text],input[type=password]{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;margin-bottom:10px;}
-input:focus{outline:none;border-color:var(--accent);}
-.btn{padding:9px 20px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;cursor:pointer;transition:opacity .15s;}
-.btn:hover{opacity:.75;}.btn:disabled{opacity:.35;cursor:default;}
-.btn.primary{background:var(--text);color:var(--bg);border-color:var(--text);}.btn.primary:hover{opacity:.82;}
-.btn.ghost{background:transparent;border-color:var(--border);color:var(--muted);font-size:13px;padding:7px 14px;}.btn.ghost:hover{color:var(--text);}
-.err{font-size:13px;color:var(--wrong);margin:6px 0;}
-.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:400px;margin:60px auto 0;}
-.auth-box h2{text-align:center;margin-bottom:20px;}
-.auth-tabs{display:flex;margin-bottom:20px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;}
-.auth-tab{flex:1;padding:9px;text-align:center;cursor:pointer;font-size:14px;background:var(--surface2);color:var(--muted);}
-.auth-tab.sel{background:var(--text);color:var(--bg);}
-.user-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;font-size:13px;color:var(--muted);}
-.user-bar strong{color:var(--text);}
-.menu-tabs{display:flex;margin-bottom:20px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;}
-.menu-tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:14px;background:var(--surface2);color:var(--muted);border:none;}
-.menu-tab.sel{background:var(--text);color:var(--bg);}
-.karisik-row{display:flex;gap:10px;}
-.karisik-btn{flex:1;padding:14px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;text-align:center;}
-.karisik-btn:hover{border-color:var(--accent);color:var(--accent);}
-.wl-search{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;margin-bottom:14px;}
-.wl-search:focus{outline:none;border-color:var(--accent);}
-.wl-group{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:6px;margin-top:16px;}
-.wl-group:first-child{margin-top:0;}
-.wl-item{display:flex;flex-direction:column;padding:7px 0;border-bottom:1px solid var(--border);}
-.wl-word{font-weight:600;font-size:14px;color:var(--accent);}
-.wl-tr{font-size:12px;color:var(--tr-color);margin-top:1px;}
-.wl-defs{font-size:13px;color:var(--muted);margin-top:2px;}
-.bolum-info{font-size:13px;color:var(--muted);margin-bottom:14px;padding:10px 14px;background:var(--surface2);border-radius:var(--rsm);border-left:3px solid var(--accent);}
-.chapter-list{display:flex;flex-direction:column;gap:10px;}
-.chapter-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .15s;}
-.chapter-card:hover:not(.locked){border-color:var(--accent);}
-.chapter-card.locked{opacity:.45;cursor:default;}
-.chapter-card.done{border-color:var(--correct);}
-.ch-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.ch-num{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
-.ch-title{font-size:15px;font-weight:600;}
-.ch-count{font-size:12px;color:var(--muted);margin-top:2px;}
-.ch-badge{font-size:11px;padding:3px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
-.ch-badge.done{background:var(--correct-bg);color:var(--correct);}
-.ch-badge.lock{background:var(--wrong-bg);color:var(--wrong);}
-.ch-badge.open{background:var(--surface2);color:var(--muted);}
-.ch-prog{height:3px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden;}
-.ch-prog-fill{height:100%;background:var(--accent);transition:width .3s;}
-.spinner{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
-.prog{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:18px;}
-.progf{height:100%;background:var(--text);transition:width .3s;}
-.topbar{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:10px;align-items:center;gap:8px;}
-.card-wrap{perspective:1000px;height:240px;margin:0 0 6px;cursor:pointer;user-select:none;}
-.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
-.card-inner.fl{transform:rotateY(180deg);}
-.cface{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--surface);text-align:center;overflow:hidden;}
-.cface.back{transform:rotateY(180deg);background:var(--surface2);justify-content:flex-start;padding-top:20px;overflow-y:auto;}
-.clabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
-.cword{font-size:26px;font-weight:600;margin-bottom:6px;line-height:1.2;}
-.csub{font-size:13px;color:var(--muted);}
-.cdefs{font-size:14px;line-height:1.9;width:100%;}
-.ditem{display:flex;align-items:center;gap:8px;margin:2px 0;text-align:left;}
-.ddot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;}
-.fhint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;}
-.albl{font-size:13px;color:var(--muted);margin:8px 0 6px;}
-.arow{display:flex;gap:8px;}
-.ainp{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--surface);color:var(--text);font-size:14px;}
-.ainp:focus{outline:none;border-color:var(--text);}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
-.tok{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--correct-bg);color:var(--correct);}
-.tfail{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--wrong-bg);color:var(--wrong);}
-.tnear{font-size:12px;padding:3px 10px;border-radius:100px;background:var(--near-bg);color:var(--near);border:1px solid var(--near);}
-.fb{font-size:13px;color:var(--muted);margin-top:6px;min-height:16px;}
-.fb.good{color:var(--correct);}.fb.near{color:var(--near);}
-.legend{display:flex;gap:10px;font-size:12px;color:var(--muted);margin-top:6px;}
-.legend span{display:flex;align-items:center;gap:4px;}
-.ldot{width:7px;height:7px;border-radius:50%;}
-.bottom-row{margin-top:10px;}
-.navrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;}
-.tr-toggle-btn{width:100%;padding:8px 14px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--surface2);color:var(--tr-color);font-size:13px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;font-weight:500;}
-.tr-toggle-btn .arr{font-size:11px;transition:transform .2s;}
-.tr-toggle-btn.open .arr{transform:rotate(180deg);}
-.tr-body{display:none;background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--rsm) var(--rsm);padding:9px 14px;font-size:14px;color:var(--tr-color);font-weight:500;}
-.tr-body.open{display:block;}
-.sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0;}
-.scard{background:var(--surface2);border-radius:var(--rsm);padding:14px;text-align:center;}
-.snum{font-size:26px;font-weight:600;}.slbl{font-size:12px;color:var(--muted);margin-top:2px;}
-.ritem{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.bdg{font-size:11px;padding:2px 8px;border-radius:100px;font-weight:500;white-space:nowrap;}
-.bok{background:var(--correct-bg);color:var(--correct);}
-.bpart{background:var(--partial-bg);color:var(--near);}
-.bfail{background:var(--wrong-bg);color:var(--wrong);}
-.rword{font-weight:500;font-size:14px;min-width:110px;}
-.rdefs{font-size:13px;color:var(--muted);flex:1;}
-.rpts{font-size:13px;color:var(--muted);white-space:nowrap;}
-.complete-banner{background:var(--correct-bg);border:1px solid var(--correct);border-radius:var(--radius);padding:14px;text-align:center;margin-bottom:14px;color:var(--correct);font-weight:500;}
+  :root {
+    --bg: #f7f6f3; --surface: #ffffff; --surface2: #f0ede8;
+    --text: #1a1a1a; --muted: #6b6860; --border: #ddd9d0;
+    --correct: #2e7d57; --correct-bg: #4caf8320;
+    --wrong: #a33030; --wrong-bg: #e05a5a20;
+    --partial: #8a5c00; --partial-bg: #f5a62320;
+    --accent: #4a7fd4;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151f; --surface: #1a1e2e; --surface2: #161929;
+      --text: #f0ece2; --muted: #6b6860; --border: #2a2f45;
+      --accent: #6b9ff0;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; display: flex; justify-content: center;
+    padding: 0 16px 60px;
+  }
+  #app { width: 100%; max-width: 780px; }
+  .screen { display: none; } .screen.active { display: block; }
+  h2 { font-size: 18px; font-weight: 500; margin-bottom: 10px; }
+  p  { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+  textarea {
+    width: 100%; min-height: 200px; font-family: 'Courier New', monospace; font-size: 13px;
+    padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text); resize: vertical; line-height: 1.8;
+  }
+  textarea:focus { outline: none; border-color: var(--text); }
+  .btn {
+    padding: 9px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 14px; cursor: pointer; transition: opacity .15s;
+  }
+  .btn:hover { opacity: 0.75; } .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { opacity: 0.82; }
+  .row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .error { font-size: 13px; color: var(--wrong); margin-top: 6px; }
+  .info-box {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 14px; font-family: 'Courier New', monospace; font-size: 12px;
+    color: var(--muted); line-height: 1.9; margin-bottom: 12px;
+  }
+  .prog { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
+  .progf { height: 100%; background: var(--text); transition: width .3s; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .card-wrap { perspective: 1000px; height: 260px; margin: 0 0 6px; cursor: pointer; user-select: none; }
+  .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+  .card-inner.fl { transform: rotateY(180deg); }
+  .cface {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius);
+    border: 1px solid var(--border); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 24px; background: var(--surface); text-align: center; overflow: hidden;
+  }
+  .cface.back { transform: rotateY(180deg); background: var(--surface2); justify-content: flex-start; padding-top: 20px; overflow-y: auto; }
+  .clabel { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  .cword { font-size: 26px; font-weight: 600; margin-bottom: 6px; line-height: 1.2; }
+  .csub { font-size: 13px; color: var(--muted); }
+  .cdefs { font-size: 14px; line-height: 1.9; width: 100%; }
+  .ditem { display: flex; align-items: center; gap: 8px; margin: 2px 0; text-align: left; }
+  .ddot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .fhint { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+  .albl { font-size: 13px; color: var(--muted); margin: 12px 0 8px; }
+  .arow { display: flex; gap: 8px; }
+  .ainp {
+    flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text); font-size: 14px;
+  }
+  .ainp:focus { outline: none; border-color: var(--text); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; min-height: 22px; margin-top: 8px; }
+  .tok   { font-size: 12px; padding: 3px 10px; border-radius: 100px; background: var(--correct-bg); color: var(--correct); }
+  .tfail { font-size: 12px; padding: 3px 10px; border-radius: 100px; background: var(--wrong-bg); color: var(--wrong); }
+  .fb { font-size: 13px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+  .fb.good { color: var(--correct); }
+  .navrow { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 8px; }
+  .sgrid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin: 16px 0; }
+  .scard { background: var(--surface2); border-radius: var(--radius-sm); padding: 14px; text-align: center; }
+  .snum { font-size: 26px; font-weight: 600; } .slbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .ritem { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .bdg { font-size: 11px; padding: 2px 8px; border-radius: 100px; font-weight: 500; white-space: nowrap; }
+  .bok { background: var(--correct-bg); color: var(--correct); }
+  .bpart { background: var(--partial-bg); color: var(--partial); }
+  .bfail { background: var(--wrong-bg); color: var(--wrong); }
+  .rword { font-weight: 500; font-size: 14px; min-width: 120px; }
+  .rdefs { font-size: 13px; color: var(--muted); flex: 1; }
+  .rpts  { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  /* Accordion */
+  .acc-group { margin-bottom: 8px; }
+  .acc-header {
+    width: 100%; text-align: left; padding: 11px 16px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--surface); color: var(--text);
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: opacity .15s;
+  }
+  .acc-header:hover { opacity: 0.75; }
+  .acc-header .acc-arrow { font-size: 11px; color: var(--muted); transition: transform .2s; }
+  .acc-header.open .acc-arrow { transform: rotate(180deg); }
+  .acc-body { display: none; padding: 10px 0 4px 0; }
+  .acc-body.open { display: block; }
+  .sec-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sec-btn {
+    padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-size: 13px; cursor: pointer; transition: opacity .15s;
+  }
+  .sec-btn:hover { opacity: 0.7; }
+  .sec-btn .sec-count { font-size: 11px; color: var(--muted); margin-left: 5px; }
+
+  /* Ana sayfa */
+  .home-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0 24px;
+    font-size: 14px; color: var(--muted);
+  }
+  .home-header strong { color: var(--text); }
+  .home-nav {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    overflow: hidden; margin-bottom: 24px;
+  }
+  .home-nav-btn {
+    padding: 14px 10px; background: var(--surface); border: none; border-right: 1px solid var(--border);
+    color: var(--muted); font-size: 14px; cursor: pointer; transition: background .15s, color .15s;
+  }
+  .home-nav-btn:last-child { border-right: none; }
+  .home-nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .home-nav-btn.active { background: var(--surface2); color: var(--text); font-weight: 600; }
+  .home-pane { display: none; }
+  .home-pane.active { display: block; }
+
+  /* Kelimeler ekranı */
+  .word-search {
+    width: 100%; padding: 11px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text); font-size: 14px; margin-bottom: 20px;
+  }
+  .word-search:focus { outline: none; border-color: var(--text); }
+  .word-search::placeholder { color: var(--muted); }
+  .metin-group { margin-bottom: 24px; }
+  .metin-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  }
+  .word-item {
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .word-item .w-de { font-size: 15px; font-weight: 700; color: var(--accent); }
+  .word-item .w-tr { font-size: 13px; color: var(--accent); opacity: 0.75; margin: 1px 0 2px; }
+  .word-item .w-syn { font-size: 13px; color: var(--muted); }
 </style>
 </head>
 <body>
 <div id="app">
 
-<div id="screen-auth" class="screen active">
-  <div class="auth-box">
-    <h2>Almanca Flash Kartlar</h2>
-    <div class="auth-tabs">
-      <div class="auth-tab sel" id="tab-login" onclick="switchAuthTab('login')">Giris Yap</div>
-      <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Kayit Ol</div>
-    </div>
-    <div id="auth-login">
-      <input type="text" id="login-user" placeholder="Kullanici adi" autocomplete="off" autocorrect="off" autocapitalize="off"/>
-      <input type="password" id="login-pass" placeholder="Sifre"/>
-      <div id="login-err" class="err" style="display:none;"></div>
-      <button class="btn primary" style="width:100%;margin-top:4px;" onclick="doLogin()">Giris Yap</button>
-    </div>
-    <div id="auth-register" style="display:none;">
-      <input type="text" id="reg-user" placeholder="Kullanici adi" autocomplete="off" autocorrect="off" autocapitalize="off"/>
-      <input type="password" id="reg-pass" placeholder="Sifre (min 6 karakter)"/>
-      <input type="password" id="reg-pass2" placeholder="Sifreyi tekrar gir"/>
-      <div id="reg-err" class="err" style="display:none;"></div>
-      <button class="btn primary" style="width:100%;margin-top:4px;" onclick="doRegister()">Kayit Ol</button>
-    </div>
+<!-- ANA SAYFA -->
+<div id="screen-home" class="screen active">
+  <div class="home-header">
+    <span>Hoş geldin</span>
+    <button class="btn" style="padding:5px 14px;font-size:13px;" onclick="resetHome()">Çıkış</button>
   </div>
-</div>
+  <div class="home-nav">
+    <button class="home-nav-btn" id="hnav-karisik" onclick="homeNav('karisik')">Karışık Oyna</button>
+    <button class="home-nav-btn" id="hnav-kelimeler" onclick="homeNav('kelimeler')">Kelimeler</button>
+    <button class="home-nav-btn" id="hnav-bolumler" onclick="homeNav('bolumler')">Bölümler</button>
+  </div>
 
-<div id="screen-menu" class="screen">
-  <div class="user-bar">
-    <span>Hos geldin, <strong id="user-name-display">—</strong></span>
-    <button class="btn ghost" onclick="doLogout()">Cikis</button>
-  </div>
-  <div class="menu-tabs">
-    <button class="menu-tab" id="mtab-main" onclick="switchMenuTab('main')">Karisik Oyna</button>
-    <button class="menu-tab" id="mtab-words" onclick="switchMenuTab('words')">Kelimeler</button>
-    <button class="menu-tab" id="mtab-chapters" onclick="switchMenuTab('chapters')">Bolumler</button>
-  </div>
-  <div id="pane-main" style="display:none;">
-    <div class="karisik-row">
-      <div class="karisik-btn" onclick="startRandom(10)">10 Karisik Kart</div>
-      <div class="karisik-btn" onclick="startRandom(null)">Tum Kelimeleri Karistir</div>
+  <div class="home-pane" id="hpane-karisik">
+    <div class="row" style="margin-top:0;">
+      <button class="btn primary" onclick="startWithSaved()">Tümüyle Oyna</button>
+      <button class="btn" onclick="startRandom(20)">Rastgele 20 Kart</button>
+      <button class="btn" onclick="startRandom(10)">Rastgele 10 Kart</button>
     </div>
   </div>
-  <div id="pane-words" style="display:none;">
-    <input class="wl-search" id="wl-search" type="text" placeholder="Kelime ara..." oninput="renderWordList()" autocomplete="off" autocorrect="off" spellcheck="false"/>
+
+  <div class="home-pane" id="hpane-kelimeler">
+    <input class="word-search" id="word-search" type="text" placeholder="Kelime ara..." oninput="filterWords(this.value)" />
     <div id="word-list"></div>
   </div>
-  <div id="pane-chapters" style="display:none;">
-    <div class="bolum-info">Her bolumde maksimum iki hata hakkini kullanabilirsin.</div>
-    <div id="spinner-chapters" class="spinner">Yukleniyor...</div>
-    <div class="chapter-list" id="chapter-list" style="display:none;"></div>
+
+  <div class="home-pane" id="hpane-bolumler">
+    <div id="acc-render"></div>
   </div>
 </div>
 
+<!-- OYUN EKRANI -->
 <div id="screen-game" class="screen">
   <div class="prog"><div class="progf" id="progf"></div></div>
   <div class="topbar">
     <span id="counter">1/1</span>
     <span>Puan: <strong id="lscore">0</strong></span>
-    <button class="btn ghost" onclick="goMenu()">Menu</button>
+    <button class="btn" style="padding:5px 14px;font-size:13px;" onclick="show('screen-home')">Menü</button>
   </div>
   <div class="card-wrap" onclick="flipCard()">
     <div class="card-inner" id="cinner">
@@ -179,443 +215,583 @@ input:focus{outline:none;border-color:var(--accent);}
       </div>
     </div>
   </div>
-  <div class="fhint" id="fhint">Karti cevirmek icin tikla</div>
+  <div class="fhint" id="fhint">Kartı çevirmek için tıkla</div>
   <div id="aarea">
-    <div class="albl" id="albl">En az 2 anlami yaz — her cevabi Enter ile ekle:</div>
+    <div class="albl" id="albl">En az 2 anlamı yaz — her cevabı Enter ile ekle:</div>
     <div class="arow">
-      <input class="ainp" id="ainp" type="text" placeholder="Cevap yaz..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input class="ainp" id="ainp" type="text" placeholder="Cevap yaz..." autocomplete="off" autocorrect="off" spellcheck="false"/>
       <button class="btn" onclick="addAns()">Ekle</button>
     </div>
     <div class="tags" id="atags"></div>
     <div class="fb" id="afb"></div>
-    <div class="legend">
-      <span><span class="ldot" style="background:var(--correct)"></span>Dogru</span>
-      <span><span class="ldot" style="background:var(--near)"></span>Yakin</span>
-      <span><span class="ldot" style="background:var(--wrong)"></span>Yanlis</span>
-    </div>
   </div>
-  <div class="bottom-row">
-    <div class="navrow">
-      <button class="btn" onclick="skipCard()">Atla</button>
-      <button class="btn primary" id="btnnext" onclick="nextCard()" disabled>Sonraki</button>
-    </div>
-    <div id="tr-wrap" style="display:none;">
-      <button class="tr-toggle-btn" id="tr-toggle" onclick="toggleTr()">
-        <span>Turkce anlami goster</span><span class="arr">v</span>
-      </button>
-      <div class="tr-body" id="tr-body"></div>
-    </div>
+  <div class="navrow">
+    <button class="btn" onclick="skipCard()">Atla</button>
+    <button class="btn primary" id="btnnext" onclick="nextCard()" disabled>Sonraki →</button>
+  </div>
+  <div style="margin-top:10px;">
+    <button class="btn" onclick="toggleTr()" style="width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+      <span>Türkçe anlamı göster</span><span id="tr-arrow" style="font-size:11px;color:var(--muted);">▼</span>
+    </button>
+    <div id="tr-body" style="display:none;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);font-size:14px;line-height:1.9;"></div>
   </div>
 </div>
 
+<!-- SONUÇ EKRANI -->
 <div id="screen-result" class="screen">
-  <div id="complete-banner" class="complete-banner" style="display:none;">Bolum tamamlandi! Sonraki bolum acildi.</div>
   <h2>Tur Bitti!</h2>
   <div class="sgrid">
     <div class="scard"><div class="snum" id="rscore">0</div><div class="slbl">Toplam Puan</div></div>
-    <div class="scard"><div class="snum" id="rcorrect">0</div><div class="slbl">Tam Dogru</div></div>
-    <div class="scard"><div class="snum" id="rpartial">0</div><div class="slbl">Kismen</div></div>
+    <div class="scard"><div class="snum" id="rcorrect">0</div><div class="slbl">Tam Doğru</div></div>
+    <div class="scard"><div class="snum" id="rpartial">0</div><div class="slbl">Kısmen</div></div>
   </div>
   <div id="rlist"></div>
-  <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+  <div class="row" style="margin-top:20px;">
     <button class="btn primary" onclick="restartGame()">Tekrar Oyna</button>
-    <button class="btn" onclick="goMenu()">Menu</button>
+    <button class="btn" onclick="show('screen-home')">← Menü</button>
   </div>
 </div>
 
 </div>
-<script type="module">
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged,updateProfile}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import{getFirestore,doc,getDoc,setDoc,updateDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-const firebaseConfig={apiKey:"AIzaSyD1U5yl2NNcnu7hWUco1nZA1C4MSAYC7Ao",authDomain:"flash-card-game-b6656.firebaseapp.com",projectId:"flash-card-game-b6656",storageBucket:"flash-card-game-b6656.firebasestorage.app",messagingSenderId:"702357251050",appId:"1:702357251050:web:b6d8d52d9f67ce0307c893"};
-const fireApp=initializeApp(firebaseConfig);
-const auth=getAuth(fireApp);
-const db=getFirestore(fireApp);
-function toEmail(u){return u.toLowerCase().replace(/[^a-z0-9]/g,'')+'@flashcard.app';}
+<script>
+const SECTIONS = {
+  "Vize": {
+    "T1": `Kindheit = Kinderjahre, frühe Lebensjahre
+Verbringen = aufhalten
+Jugend = Pubertät, Jugendzeit
+Gestorben = verstorben, Tod, hingeschieden, sein Leben verlieren
+Geboren = gebürtig, zur/auf die Welt gekommen
+Annehmen = empfangen, akzeptieren, entgegennehmen, vermuten, davon ausgehen, für wahrscheinlich halten
+Älteste = früher
+Berühmte = bekannt, prominent, namhaft, vertraut, populär, hochgestellt, beliebt
+Nachweislich = beweisbar, erwiesenermaßen, belegt
+Buchdruck = Druckkunst, Lettern, Druckwesen
+Universität = Hochschule, Lehranstalt
+Druckverfahren = Druckmethode, Drucktechnik, Druckvorgang
+Erfinder = Entdecker, Urheber, Schöpfer
+Vermutlich = wahrscheinlich, wohl, möglicherweise, anscheinend, voraussichtlich, mutmaßlich, angenommen, eventuell
+Jedoch = aber, hingegen, dennoch
+Druckerzeugnis = Druckprodukt, Drucksachen
+Erscheinen = publizieren, herausgeben, veröffentlichen, herausbringen
+Untersuchen = analysieren, erforschen, überprüfen, recherchieren, kontrollieren
+Sinn = Bedeutung, Verstand, Geist
+Zweck = Ziel
+Anthropologie = Menschenkunde, Humanwissenschaft
+Bloß = nur
+Spezifika = Besonderheit, Merkmale, Eigenheit
+Existenz = Dasein, Bestand
+Empirisch = praktisch, experimentell, praxisbezogen, beobachtungsbasierend
+Entwickeln = hervorbringen, gestalten, entfalten, aufbauen, konzipieren, ausarbeiten, ausbilden, entstehen
+Disziplin = Bereich, Fachgebiet
+Zuhilfenahme = Verwendung, Inanspruchnahme, mittels, Nutzung, Mithilfe
+Versuchen = probieren, anstreben, sich bemühen, streben
+Erkenntnis = Befunde, Einsicht
+Begründer = Gründer, Entwickler, Urheber, Vordenker
+Zentral = Mittelpunkt, wichtig, Hauptdenker
+Autoren = Schreiber, Schriftsteller, Poet, Verfasser
+Betonen = hervorheben, unterstreichen, markieren
+Defizit = Fehlende, Mangel
+Kompensieren = ersetzen, ausgleichen
+Krankheit = leiden, Erkrankungen, Beschwerde
+Fortschreitend = zunehmend, weiterentwickelnd, progressiv, kontinuierlich, voranschreitend
+Schrumpfung = Abnahme, Reduktion, Minderung, Rückbildung
+Schwierig = kompliziert, erschwerend, anspruchsvoll, hart, mühevoll, mühsam, anstrengend
+Problem = Herausforderung
+Symptome = Anzeichen, Merkmale, Hinweise, Krankheitszeichen
+Diagnose = Feststellen, Befund, ärztliche Beurteilung, Erkennung, Untersuchungsergebnisse
+Deutlich = klar, eindeutig, offensichtlich, explizit, erkennbar, augenfällig, ausgeprägt, verständlich
+Benennung = Bezeichnung, Name, Beteiligung
+Fähigkeiten = Begabung, Kompetenz, Fertigkeiten, Qualifikation
+Wesentlich = erheblich, maßgeblich, entscheidend, grundlegend, signifikant, wichtig, fundamental, zentral, bedeutend, notwendig, elementar
+Aktuell = derzeit, momentan, gegenwärtig, jetzt, modern, neu, zeitgemäß
+Indiz = Hinweis, Merkmal, Beweis
+Ursache = Grund, Auslöser
+Gering = kaum, klein, niedrig, schwach, wenig
+Anhaltend = andauernd, stetig, dauerhaft, fortwährend, ständig, fortlaufend, konstant, permanent
+Zerstörung = Zusammenbruch, Vernichtung, Verwüstung, Beschädigung, Demolieren
+Destruktion = Verfall, Zerfall, Abbau, Ausmerzung
+Gerade = besonders, ausgerechnet, genau
+Trockener = dürre, arid, regenarm
+Gebiet = Region, Bereich, Landstrich
+Katastrophal = verheerend, fatal, zerstörerisch
+Führen zu = verursachen, bewirken, auslösen
+Wachsen = zunehmen, steigen, anwachsen
+Erhöht = gesteigert, vermehrt, höher
+Zunehmend = immer mehr, fortlaufend, progressiv
+Errichtung = Aufbau, Gründung, Erstellung
+Gigantisch = riesig, enorm, gewaltig
+Zu erwähnen = nennen, anführen, erwähnenswert finden
+Streit = Konflikt, Auseinandersetzung, Disput
+Anliegerstaaten = Nachbarstaaten, angrenzende Staaten, Uferstaaten
+Fluss = Strom, Gewässer, Fließgewässer
+Protest einlegen = Einspruch haben, Widerstand leisten, Beschwerde einreichen
+Unterbinden = stoppen, verhindern, blockieren
+Erfolgreich = gelungen, siegreich
+Rezept = Methode, Vorgehensweise, Strategie
+Sich widersetzen = sich wehren, Widerstand leisten, opponieren
+Produzieren = herstellen, fertigen, erzeugen
+Bedingungen = Voraussetzungen, Umstände, Konditionen
+Gestalten = formen, organisieren, einrichten
+Unternehmen = Firmen, Konzerne, Betriebe
+Binden an = koppeln an, knüpfen an, abhängig machen von
+Beteiligen = teilhaben lassen, einbeziehen, mitwirken lassen
+Zugang = Zutritt, Zugriff, Zugangsmöglichkeit
+Erwerben = erlangen, gewinnen, sich aneignen
+Investoren = Geldgeber, Kapitalgeber, Anleger
+Gewinne = Profite, Erträge, Einnahmen
+Garantieren = zusichern, gewährleisten, versprechen
+Ankurbeln = fördern, beleben, vorantreiben
+Entwicklung = Fortschritt, Wachstum, Entwicklungsschub
+Vergangenheit = Vorzeit, Historie, alt, frühere, vorbei
+Erforschen = untersuchen, analysieren, ergründen, ermitteln, herausfinden, erkunden, prüfen, kontrollieren, abchecken, recherchieren, durchleuchten
+Sowie = und, ebenso, nebst, zudem, ferner
+Herausarbeiten = verdeutlichen, herausstellen, herauskristallisieren
+Möglichst = soweit wie möglich, bestmöglich
+Idee = Einfall, Gedanke, Auffassung, Vorschlag
+Anstehende = bevorstehende, künftige, in Zukunft geschehen, nahend
+Erweiterung = Zunahme, Ausbau, Erhöhung, Vergrößerung, Expansion
+Umfassend = umfangreich, vollständig, ausgiebig, ausführlich
+Vielseitig = reichhaltig, vielfältig, allseitig
+Ausstellung = Präsentation, Schau, Exponate, Darbietung, Vorzeigung
+Verbundenheit = Zusammengehörigkeit, Bindung, Zugehörigkeit, Nähe
+Wertvoll = unverzichtbar, unersetzlich, kostbar, hochwertig, bedeutend, Schatz
+Verzichten = aufgeben, entsagen, unterlassen
+Aufbauen = errichten, gründen, entwickeln
+Konkurrieren = wetteifern, mithalten
+Exportieren = ausführen, verkaufen ins Ausland, liefern
+Einführen = importieren, einbringen, beziehen
+Erzeugnisse = Produkte, Güter, Waren
+Getreide = Korn, Saatgut, Feldfrucht
+Hart = streng, fest, solide, widerstandsfähig
+Weich = flexibel, soft, biegsam, flauschig, nachgiebig, geschmeidig
+Elastisch = dehnbar, biegbar
+Struktur = Aufbau, Anlage, Form, Ordnung
+Basieren = beruhen, gründen, stützen
+Produktion = Herstellung, Fertigung, Ware, Erzeugung, Anfertigung, Fabrikation
+Menge = Anzahl, Quantität, Masse, Volumen, Umfang, Kontingenz
+Preisgünstig = billig, kosteneffizient, preiswert, günstig
+Traditionell = herkömmlich, konventionell, überliefert, kulturell bedingt, klassisch
+Kraftstoff = Treibstoff, Brennstoff
+Zulassen = erlauben, ermöglichen, gestatten
+Möglichkeiten = Chancen, Optionen, Wege
+Verdrängen = ersetzen, ablösen, zurückdrängen
+Steigen = zunehmen, wachsen, sich erhöhen
+Interesse = Neugier, Aufmerksamkeit, Augenmerk, Begeisterung, Motivation, Wunsch, Belang
+Themen = Gegenstand, Sache, Inhalt, Stoff, Thematik
+Zusammenhang = Beziehung, Verbindung, Bezug, Kontext, Verhältnis, Verknüpfung
+Aufmerksamkeit = Konzentration, Beachtung, Achtsamkeit, Fokus, Interesse, Zuwendung, Achtung
+Hilfreich = nützlich, förderlich, sinnvoll
+H�ufig = oft, vielfach, regelmäßig
+Situation = Lage, Zustand, Umstand
+Benötigen = brauchen, erfordern, voraussetzen
+Gesteigert = erhöht, verbessert, verstärkt
+Trainierbar = übbar, erlernbar, ausbaubar
+Leichter = einfacher, müheloser, schneller
+Streitkräfte = Truppen, Armee
+Heute = heutzutage, zur Zeit
+Bezeichnen = nennen, definieren
+Land = Nation, Staat
+Verschieden = unterschiedlich, divers
+Meist = oft, überwiegend
+Bestehen = stammen, entstehen
+Vermindern = reduzieren, senken
+Zunächst = vorerst, zuerst, erst
+Erstmals = zum ersten Mal, erstmalig
+Preiswert = günstig, billig
+Allerdings = sondern, aber
+Bisher = bis jetzt, bislang`
+  },
+  "Final": {
+    "T26": `Organismus = Mensch, Körper
+Zumindest = Mindestens, wenigstens
+Natürlich = sicher, logisch
+Rechtzeitig = pünktlich, zeitnah
+Zuständig = verantwortlich, beauftragt
+Verarbeiten = bearbeiten, erfassen
+Jedoch = aber, dennoch
+Bewusst = wissentlich, willentlich`,
+    "T27": `Zusammenbruch = Kollaps, Zerstörung, Destruktion, Zerfall
+Vermuten = glauben, vermutlich
+Betragen = sich belaufen auf, ausmachen
+Infektion = Kontamination, Infizierung, Seuche`,
+    "T30": `Sammelbegriff = Oberbegriff, Gesamtbezeichnung, Gattungsbegriff
+Erkrankung = Leiden, Krankheit
+Zerstören = kaputt machen, ruinieren
+Vorübergehend = temporär, kurzzeitig
+Umfassen = beinhalten, enthalten, abdecken
+Meist = oft, häufig, beliebt`,
+    "T31": `Keineswegs = keinesfalls, niemals, gar nicht
+Abgeordneter = Mandat, Parlamentarier
+Schnell = blitzschnell, rasch, blitzartig
+Redner = Sprecher, Referent
+Kompliziert = schwierig, komplex
+Amt = Behörde, Dienststelle, Institut
+Verfahren = Vorgang, Ablauf, Prozess
+Bewältigen = meistern, bewirken, überwinden`,
+    "T34": `Verfassung = Grundgesetz, Staatsordnung, Richtlinien
+Besonderheit = Merkmal, Qualifikation, Eigenart
+Dort = da, darin
+Bürger = Einwohner, Volk, Untertan
+Beitrag = Anteil, Mitwirkung, Zusatz
+Sozial = gesellschaftlich, gemeinschaftlich, volkstümlich`,
+    "T35": `Lage = Situation, Zustand, Position
+Bewerber = Antragsteller, Kandidat, Interessent
+Schwierigkeiten = Hürde, Komplikation, Problem, Sorgen
+Arbeitslos = brotlos, erwerbslos, arbeitssuchend
+Auswahl = Selektion, Wahl, Entscheidung`,
+    "T39": `Mannigfaltig = divers, zahlreich, vielfältig, verschieden
+Bedürfnis = Bedarf, Wille, Ansprüche
+Interesse = Motivation, Aufmerksamkeit, Antlegen
+Voraussetzung = Bedingung, Grundlage, Erfordernisse
+Recht = Gesetz, Anspruch, Rechtsordnung`,
+    "T41": `Regelung = Ordnung, Norm, Richtlinie
+Gesellschaftlich = sozial, gemeinschaftlich, volksmäßig
+Beseitigen = entfernen, abschaffen, vernichten
+Zahlreich = viel, unzählig, etlich
+Bedingung = Voraussetzung, Kondition, Umstand
+Anspruch = Recht, Forderung, Anrecht
+Bereich = Fach, Sektor, Gebiet`,
+    "T43": `Menge = Anzahl, Volumen, Vielzahl, Masse
+Gelangen = erreichen, hinkommen, am Ziel ankommen
+Anstieg = Wachstum, Zunahme, Erhöhung, Steigerung
+Folge = Konsequenz, Auswirkung, Resultat
+Problem = Konflikt, Hürde, Haken, Komplexität
+Abfall = Müll, Entsorgung, Reststoffe
+Scheinbar = vermutlich, eventuell, anscheinend, womöglich, vermeintlich`
+  }
+};
 
-const CHAPTERS=[
-{id:1,title:"Metin 1 - Johannes Gutenberg",cards:[
-{word:"Kindheit",meanings:["Kinderjahre","frühe Lebensjahre"],tr:"Cocukluk"},
-{word:"Verbringen",meanings:["aufhalten"],tr:"Gecirmek"},
-{word:"Jugend",meanings:["Pubertät","Jugendzeit"],tr:"Genclik"},
-{word:"Gestorben",meanings:["verstorben","Tod","hingeschieden","seine Leben verlieren"],tr:"Olmus"},
-{word:"Geboren",meanings:["gebürtig","zur Welt gekommen","auf Welt gekommen"],tr:"Dogmus"},
-{word:"Annehmen",meanings:["empfangen","akzeptieren","entgegen nehmen","vermuten","davon ausgehen","für wahrscheinlich halten"],tr:"Kabul etmek"},
-{word:"Älteste",meanings:["früher"],tr:"En eski"},
-{word:"Berühmte",meanings:["bekannt","prominent","namhaft","vertraut","populär","hochgestellt","beliebt"],tr:"Unlu"},
-{word:"Nachweislich",meanings:["beweisbar","erwiesenermaßen","belegt"],tr:"Kanitlanabilir"},
-{word:"Buchdruck",meanings:["Druckkunst","Lettern","Druckwesen"],tr:"Kitap baskisi"},
-{word:"Universität",meanings:["Hochschule","Lehranstalt"],tr:"Universite"},
-{word:"Druckverfahren",meanings:["Druckmethode","Drucktechnik","Druckvorgang"],tr:"Baski yontemi"},
-{word:"Erfinder",meanings:["Entdecker","Urheber","Schöpfer"],tr:"Mucit"},
-{word:"Vermutlich",meanings:["wahrscheinlich","wohl","möglicherweise","anscheinend","voraussichtlich","mutmaßlich","angenommen","eventuell"],tr:"Muhtemelen"},
-{word:"Jedoch",meanings:["aber","hingegen","dennoch"],tr:"Ancak"},
-{word:"Druckerzeugnis",meanings:["Druckprodukt","Drucksachen"],tr:"Basilı urun"},
-{word:"Erscheinen",meanings:["publizieren","herausgeben","veröffentlichen","herausbringen"],tr:"Yayimlanmak"},
-]},
-{id:2,title:"Metin 2 - Felsefi Antropoloji",cards:[
-{word:"Untersuchen",meanings:["analysieren","erforschen","überprüfen","recherchieren","kontrollieren"],tr:"Incelemek"},
-{word:"Sinn",meanings:["Bedeutung","Verstand","Geist"],tr:"Anlam / Akil"},
-{word:"Zweck",meanings:["Ziel"],tr:"Amac"},
-{word:"Anthropologie",meanings:["Menschenkunde","Humanwissenschaft"],tr:"Antropoloji"},
-{word:"Bloß",meanings:["nur"],tr:"Sadece"},
-{word:"Spezifika",meanings:["Besonderheit","Merkmale","Eigenheit"],tr:"Ozellikler"},
-{word:"Existenz",meanings:["Dasein","Bestand"],tr:"Varoluş"},
-{word:"Empirisch",meanings:["praktisch","experimentell","praxisbezogen","beobachtungsbasierend"],tr:"Ampirik"},
-{word:"Entwickeln",meanings:["hervorbringen","gestalten","entfalten","aufbauen","konzipieren","ausarbeiten","ausbilden","entstehen"],tr:"Gelistirmek"},
-{word:"Disziplin",meanings:["Bereich","Fachgebiet"],tr:"Disiplin / Alan"},
-{word:"Zuhilfenahme",meanings:["Verwendung","Inanspruchnahme","mittels","Nutzung","Mithilfe"],tr:"Kullanma"},
-{word:"Versuchen",meanings:["probieren","anstreben","sich bemühen","streben"],tr:"Denemek"},
-{word:"Erkenntnis",meanings:["Befunde","Einsicht"],tr:"Bulgu / Kavrayis"},
-{word:"Begründer",meanings:["Gründer","Entwickler","Urheber","Vordenker"],tr:"Kurucu"},
-{word:"Zentral",meanings:["Mittelpunkt","Wichtig","Hauptdenker"],tr:"Merkezi"},
-{word:"Autoren",meanings:["Schreiber","Schriftsteller","Poet","Verfasser"],tr:"Yazarlar"},
-{word:"Betonen",meanings:["hervorheben","unterstreichen","markieren"],tr:"Vurgulamak"},
-{word:"Defizit",meanings:["Fehlende","Mangel"],tr:"Eksiklik"},
-{word:"Kompensieren",meanings:["ersetzen","ausgleichen","neutralisieren"],tr:"Telafi etmek"},
-]},
-{id:3,title:"Metin 5 - Alzheimer Hastaligi",cards:[
-{word:"Krankheit",meanings:["leiden","Erkrankungen","Beschwerde"],tr:"Hastalik"},
-{word:"Fortschreitend",meanings:["zunehmend","weiterentwickelnd","progressiv","kontinuierlich","voranschreitend"],tr:"Ilerleyici"},
-{word:"Schrumpfung",meanings:["Abnahme","Reduktion","Minderung","Rückbildung"],tr:"Kuculme"},
-{word:"Schwierig",meanings:["kompliziert","erschwerend","anspruchsvoll","hart","mühevoll","mühsam","anstrengend"],tr:"Zor"},
-{word:"Problem",meanings:["Herausforderung"],tr:"Sorun"},
-{word:"Symptome",meanings:["Anzeichen","Merkmale","Hinweise","Krankheitszeichen"],tr:"Belirtiler"},
-{word:"Diagnose",meanings:["Feststellen","Befund","ärztliche Beurteilung","Erkennung","Untersuchungsergebnisse","ärztliche Resultat"],tr:"Teshis"},
-]},
-{id:4,title:"Metin 6 - Malzemeler ve Teknoloji",cards:[
-{word:"Deutlich",meanings:["klar","eindeutig","offensichtlich","explizit","erkennbar","augenfällig","ausgeprägt","verständlich"],tr:"Acik / Belirgin"},
-{word:"Benennung",meanings:["Bezeichnung","Name","Beteiligung"],tr:"Isimlendirme"},
-{word:"Fähigkeiten",meanings:["Begabung","Kompetenz","Fertigkeiten","Qualifikation"],tr:"Yetenekler"},
-{word:"Wesentlich",meanings:["erheblich","maßgeblich","entscheidend","grundlegend","signifikant","wichtig","fundamental","zentral","bedeutend","notwendig","elementar"],tr:"Onemli / Temel"},
-{word:"Aktuell",meanings:["derzeit","momentan","gegenwärtig","jetzt","modern","neu","zeitgemäß"],tr:"Guncel"},
-]},
-{id:5,title:"Metin 7 - Ozon Tabakasi",cards:[
-{word:"Indiz",meanings:["Hinweis","Merkmal","Beweis"],tr:"Ipucu / Kanit"},
-{word:"Ursache",meanings:["Grund","Auslöser"],tr:"Neden / Sebep"},
-{word:"Gering",meanings:["kaum","klein","niedrig","schwach","wenig"],tr:"Az / Dusuk"},
-{word:"Anhaltend",meanings:["andauernd","stetig","dauerhaft","fortwährend","ständig","fortlaufend","konstant","permanent"],tr:"Surekli"},
-{word:"Zerstörung",meanings:["Zusammenbruch","Vernichtung","Verwüstung","Beschädigung","Demolieren"],tr:"Yikim"},
-{word:"Destruktion",meanings:["Verfall","Zerfall","Abbau","Ausmerzung"],tr:"Cokus"},
-]},
-{id:6,title:"Metin 9 - Su Kitligi ve Barajlar",cards:[
-{word:"Gerade",meanings:["besonders","ausgerechnet","genau"],tr:"Tam olarak"},
-{word:"Trockener",meanings:["dürre","arid","regenarm"],tr:"Kurak"},
-{word:"Gebiet",meanings:["Region","Bereich","Landstrich"],tr:"Bolge"},
-{word:"Katastrophal",meanings:["verheerend","fatal","zerstörerisch"],tr:"Felaket boyutunda"},
-{word:"Führen zu",meanings:["verursachen","bewirken","auslösen"],tr:"Yol acmak"},
-{word:"Wachsen",meanings:["zunehmen","steigen","anwachsen"],tr:"Artmak"},
-{word:"Erhöht",meanings:["gesteigert","vermehrt","höher"],tr:"Artirilmis"},
-{word:"Zunehmend",meanings:["immer mehr","fortlaufend","progressiv"],tr:"Giderek artan"},
-{word:"Errichtung",meanings:["Aufbau","Gründung","Erstellung"],tr:"Insa / Kurma"},
-{word:"Gigantisch",meanings:["riesig","enorm","gewaltig"],tr:"Dev / Muazzam"},
-{word:"Zu erwähnen",meanings:["nennen","anführen","erwähnenswert finden"],tr:"Belirtmek"},
-{word:"Streit",meanings:["Konflikt","Auseinandersetzung","Disput"],tr:"Anlasmazlik"},
-{word:"Anliegerstaaten",meanings:["Nachbarstaaten","angrenzende Staaten","Uferstaaten"],tr:"Komsu devletler"},
-{word:"Fluss",meanings:["Strom","Gewässer","Fließgewässer"],tr:"Nehir"},
-{word:"Protest einlegen",meanings:["Einspruch haben","Widerstand leisten","Beschwerde einreichen"],tr:"Itiraz etmek"},
-{word:"Unterbinden",meanings:["stoppen","verhindern","blockieren"],tr:"Engellemek"},
-]},
-{id:7,title:"Metin 10 - Kapitalizm ve Kalkinma",cards:[
-{word:"Erfolgreich",meanings:["gelungen","siegreich"],tr:"Basarili"},
-{word:"Rezept",meanings:["Methode","Vorgehensweise","Strategie"],tr:"Yontem / Strateji"},
-{word:"Sich widersetzen",meanings:["sich wehren","Widerstand leisten","opponieren"],tr:"Karsi cikmak"},
-{word:"Produzieren",meanings:["herstellen","fertigen","erzeugen"],tr:"Uretmek"},
-{word:"Bedingungen",meanings:["Voraussetzungen","Umstände","Konditionen"],tr:"Kosullar"},
-{word:"Gestalten",meanings:["formen","organisieren","einrichten"],tr:"Sekillendirmek"},
-{word:"Unternehmen",meanings:["Firmen","Konzerne","Betriebe"],tr:"Sirketler"},
-{word:"Binden an",meanings:["koppeln an","knüpfen an","abhängig machen von"],tr:"Baglamak"},
-{word:"Beteiligen",meanings:["teilhaben lassen","einbeziehen","mitwirken lassen"],tr:"Dahil etmek"},
-{word:"Zugang",meanings:["Zutritt","Zugriff","Zugangsmöglichkeit"],tr:"Erisim"},
-{word:"Erwerben",meanings:["erlangen","gewinnen","sich aneignen"],tr:"Kazanmak"},
-{word:"Investoren",meanings:["Geldgeber","Kapitalgeber","Anleger"],tr:"Yatirimcilar"},
-{word:"Gewinne",meanings:["Profite","Erträge","Einnahmen"],tr:"Karlar"},
-{word:"Garantieren",meanings:["zusichern","gewährleisten","versprechen"],tr:"Garanti etmek"},
-{word:"Ankurbeln",meanings:["fördern","beleben","vorantreiben"],tr:"Canlandirmak"},
-{word:"Entwicklung",meanings:["Fortschritt","Wachstum","Entwicklungsschub"],tr:"Gelisme"},
-]},
-{id:8,title:"Metin 13 - Tarih Bilimi",cards:[
-{word:"Vergangenheit",meanings:["Vorzeit","Historie","alt","frühere","vorbei"],tr:"Gecmis"},
-{word:"Erforschen",meanings:["untersuchen","analysieren","ergründen","ermitteln","herausfinden","erkunden","prüfen","kontrollieren","recherchieren","durchleuchten"],tr:"Arastirmak"},
-{word:"Sowie",meanings:["und","ebenso","nebst","zudem","ferner"],tr:"Ve ayrica"},
-{word:"Herausarbeiten",meanings:["verdeutlichen","herausstellen","herauskristallisieren"],tr:"Ortaya cikarmak"},
-{word:"Möglichst",meanings:["soweit wie möglich","bestmöglich"],tr:"Mumkun oldugunca"},
-{word:"Idee",meanings:["Einfall","Gedanke","Auffassung","Vorschlag"],tr:"Fikir"},
-]},
-{id:9,title:"Metin 14 - Avrupa Birligi",cards:[
-{word:"Anstehende",meanings:["bevorstehende","künftige","in Zukunft geschehen","nahend"],tr:"Yaklasan"},
-{word:"Erweiterung",meanings:["Zunahme","Ausbau","Ausnehmung","Erhöhung","Vergrößerung","Expansion"],tr:"Genisleme"},
-{word:"Umfassend",meanings:["umfangreich","vollständig","ausgiebig","ausführlich"],tr:"Kapsamli"},
-{word:"Vielseitig",meanings:["reichhaltig","vielfältig","allseitig"],tr:"Cok yonlu"},
-{word:"Ausstellung",meanings:["Präsentation","Schau","Exponate","Darbietung","Vorzeigung"],tr:"Sergi"},
-{word:"Verbundenheit",meanings:["Zusammengehörigkeit","Bindung","Zugehörigkeit","Nähe"],tr:"Baglilik"},
-{word:"Wertvoll",meanings:["unverzichtbar","unersätzlich","kostbar","hochwertig","bedeutend","Schatz"],tr:"Degerli"},
-]},
-{id:10,title:"Metin 15 - Ingiltere ve Koloniler",cards:[
-{word:"Verzichten",meanings:["aufgeben","entsagen","unterlassen"],tr:"Vazgecmek"},
-{word:"Aufbauen",meanings:["errichten","gründen","entwickeln"],tr:"Kurmak"},
-{word:"Konkurrieren",meanings:["wetteifern","mithalten"],tr:"Rekabet etmek"},
-{word:"Exportieren",meanings:["ausführen","verkaufen ins Ausland","liefern"],tr:"Ihrac etmek"},
-{word:"Einführen",meanings:["importieren","einbringen","beziehen"],tr:"Ithal etmek"},
-{word:"Erzeugnisse",meanings:["Produkte","Güter","Waren"],tr:"Urunler"},
-{word:"Getreide",meanings:["Korn","Saatgut","Feldfrucht"],tr:"Tahil"},
-]},
-{id:11,title:"Metin 17 - Plastikler",cards:[
-{word:"Hart",meanings:["streng","fest","solide","widerstandsfähig"],tr:"Sert"},
-{word:"Weich",meanings:["flexibel","soft","biegsam","flauschig","nachgiebig","geschmeidig"],tr:"Yumusak"},
-{word:"Elastisch",meanings:["dehnbar","biegbar"],tr:"Esnek"},
-{word:"Struktur",meanings:["Aufbau","Anlage","Form","Ordnung"],tr:"Yapi"},
-{word:"Basieren",meanings:["beruhen","gründen","stützen"],tr:"Dayanmak"},
-{word:"Produktion",meanings:["Herstellung","Fertigung","Ware","Erzeugung","Anfertigung","Fabrikation"],tr:"Uretim"},
-{word:"Menge",meanings:["Anzahl","Quantität","Masse","Volumen","Umfang","Kontingenz"],tr:"Miktar"},
-{word:"Preisgünstig",meanings:["billig","kosteneffizient","preiswert","günstig"],tr:"Uygun fiyatli"},
-{word:"Traditionell",meanings:["herkömmlich","konventionell","überliefert","kulturell bedingt","klassisch"],tr:"Geleneksel"},
-{word:"Kraftstoff",meanings:["Treibstoff","Brennstoff"],tr:"Yakit"},
-{word:"Zulassen",meanings:["erlauben","ermöglichen","gestatten"],tr:"Izin vermek"},
-{word:"Möglichkeiten",meanings:["Chancen","Optionen","Wege"],tr:"Olanaklar"},
-{word:"Verdrängen",meanings:["ersetzen","ablösen","zurückdrängen"],tr:"Yerini almak"},
-{word:"Steigen",meanings:["zunehmen","wachsen","sich erhöhen"],tr:"Artmak"},
-]},
-{id:12,title:"Metin 18 - Konsantrasyon ve Stres",cards:[
-{word:"Interesse",meanings:["Neugier","Aufmerksamkeit","Augenmerk","Begeisterung","Anteilnahme","Motivation"],tr:"Ilgi / Merak"},
-{word:"Themen",meanings:["Gegenstand","Sache","Inhalt","Stoff","Thematik"],tr:"Konular"},
-{word:"Vermuten",meanings:["glauben","vorausschauen","vorhersagen"],tr:"Varsaymak"},
-{word:"Zusammenhang",meanings:["Beziehung","Verbindung","Bezug","Kontext","Verhältnis","Verknüpfung"],tr:"Baglanti"},
-{word:"Aufmerksamkeit",meanings:["Konzentration","Beachtung","Achtsamkeit","Fokus","Interesse","Zuwendung","Achtung"],tr:"Dikkat"},
-{word:"Gering",meanings:["niedrig","schwach","minimal"],tr:"Az / Dusuk"},
-{word:"Hilfreich",meanings:["nützlich","förderlich","sinnvoll"],tr:"Yararli"},
-{word:"Häufig",meanings:["oft","vielfach","regelmäßig"],tr:"Sik sik"},
-{word:"Situation",meanings:["Lage","Zustand","Umstand"],tr:"Durum"},
-{word:"Benötigen",meanings:["brauchen","erfordern","voraussetzen"],tr:"Ihtiyac duymak"},
-{word:"Gesteigert",meanings:["erhöht","verbessert","verstärkt"],tr:"Artirilmis"},
-{word:"Trainierbar",meanings:["übbar","erlernbar","ausbaubar"],tr:"Egitilebilir"},
-{word:"Leichter",meanings:["einfacher","müheloser","schneller"],tr:"Daha kolay"},
-]},
-{id:13,title:"Metin 23 - Paralı Askerler",cards:[
-{word:"Interesse",meanings:["Wunsch","Belang"],tr:"Cıkar / Istek"},
-{word:"Streitkräfte",meanings:["Truppen","Armee"],tr:"Silahli kuvvetler"},
-{word:"Heute",meanings:["heutzutage","zur Zeit"],tr:"Bugun / Gunumuzde"},
-{word:"Bezeichnen",meanings:["nennen","definieren"],tr:"Adlandirmak"},
-{word:"Land",meanings:["Nation","Staat"],tr:"Ulke / Devlet"},
-{word:"Verschieden",meanings:["unterschiedlich","divers"],tr:"Cesitli / Farkli"},
-]},
-{id:14,title:"Metin 24 - Güneş Panelleri",cards:[
-{word:"Meist",meanings:["oft","überwiegend"],tr:"Cogunlukla"},
-{word:"Bestehen",meanings:["stammen","entstehen"],tr:"Olusmak"},
-{word:"Vermindern",meanings:["reduzieren","senken"],tr:"Azaltmak"},
-{word:"Zunächst",meanings:["vorerst","zuerst","erst"],tr:"Oncelikle"},
-{word:"Erstmals",meanings:["zum ersten Mal","erstmalig"],tr:"Ilk kez"},
-{word:"Steigen",meanings:["erhöhen","zunehmend","vermehren","ansteigen","wachsen"],tr:"Artmak"},
-{word:"Preiswert",meanings:["günstig","billig"],tr:"Ucuz"},
-{word:"Allerdings",meanings:["sondern","aber"],tr:"Ancak"},
-{word:"Bisher",meanings:["bis jetzt","bislang"],tr:"Simdiye kadar"},
-]},
-];
+const TURKISH = {
+  "Organismus": "Organizma, canlı varlık",
+  "Zumindest": "En azından, hiç olmazsa",
+  "Natürlich": "Doğal, elbette, tabii ki",
+  "Rechtzeitig": "Zamanında, vaktinde",
+  "Zuständig": "Yetkili, sorumlu",
+  "Verarbeiten": "İşlemek, sindirmek",
+  "Jedoch": "Halbuki, ancak, yine de",
+  "Bewusst": "Bilinçli, farkında",
+  "Zusammenbruch": "Çöküş, çökme, kriz",
+  "Vermuten": "Tahmin etmek, sanmak",
+  "Betragen": "Tutmak (miktar olarak), davranmak",
+  "Infektion": "Enfeksiyon, bulaşma",
+  "Sammelbegriff": "Genel kavram, çatı terim",
+  "Erkrankung": "Hastalık, rahatsızlık",
+  "Zerstören": "Tahrip etmek, yıkmak, yok etmek",
+  "Vorübergehend": "Geçici olarak, muvakkaten",
+  "Umfassen": "Kapsamak, içermek",
+  "Meist": "Çoğunlukla, genellikle",
+  "Keineswegs": "Asla, hiçbir şekilde",
+  "Abgeordneter": "Milletvekili, temsilci",
+  "Schnell": "Hızlı, çabuk",
+  "Redner": "Konuşmacı, hatip",
+  "Kompliziert": "Karmaşık, çetrefilli",
+  "Amt": "Makam, resmi görev, daire",
+  "Verfahren": "Yöntem, usul, dava, süreç",
+  "Bewältigen": "Üstesinden gelmek, başarmak",
+  "Verfassung": "Anayasa, durum/hal",
+  "Besonderheit": "Özellik, tuhaflık",
+  "Dort": "Orada, oraya",
+  "Bürger": "Vatandaş, yurttaş",
+  "Beitrag": "Katkı, aidat, pay",
+  "Sozial": "Sosyal, toplumsal",
+  "Lage": "Durum, konum, vaziyet",
+  "Bewerber": "Aday, iş başvurusu yapan kişi",
+  "Schwierigkeiten": "Zorluklar, güçlükler",
+  "Arbeitslos": "İşsiz",
+  "Auswahl": "Seçim, seçme, çeşit",
+  "Mannigfaltig": "Çeşitli, türlü türlü",
+  "Bedürfnis": "İhtiyaç, gereksinim",
+  "Interesse": "İlgi, çıkar, menfaat",
+  "Voraussetzung": "Koşul, şart, önkoşul",
+  "Recht": "Hak, hukuk, doğru",
+  "Regelung": "Düzenleme, kural",
+  "Gesellschaftlich": "Toplumsal, sosyal",
+  "Beseitigen": "Ortadan kaldırmak, gidermek",
+  "Zahlreich": "Pek çok, bol sayıda",
+  "Bedingung": "Şart, koşul",
+  "Anspruch": "Hak, talep, iddia",
+  "Bereich": "Alan, bölge, sektör",
+  "Menge": "Miktar, yığın, kalabalık",
+  "Gelangen": "Ulaşmak, varmak",
+  "Anstieg": "Artış, yükseliş, yokuş",
+  "Folge": "Sonuç, takip eden, bölüm",
+  "Problem": "Problem, sorun",
+  "Abfall": "Çöp, atık, döküntü",
+  "Scheinbar": "Görünüşte, görünüşe göre, zahiri"
+};
 
-const ALL_CARDS=CHAPTERS.flatMap(ch=>ch.cards);
-let currentUser=null,userProgress={},currentChapter=null,isRandomMode=false;
-let cards=[],cur=0,score=0,results=[],typed=[],answered=false,flipped=false;
 
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+let ALL_CARDS = [];
+let cards=[], cur=0, score=0, results=[], typed=[], answered=false, flipped=false;
 
-// Normalize: küçük harf + boşluk düzelt + Almanca özel karakterleri dönüştür
-function norm(s){
+function parseCards(raw) {
+  const out = [];
+  raw.split('\n').forEach(line => {
+    const l = line.trim();
+    if (!l) return;
+    const eq = l.indexOf('=');
+    if (eq < 0) return;
+    const word = l.slice(0, eq).trim();
+    const meanings = l.slice(eq+1).split(',').map(m => m.trim().toLowerCase()).filter(m => m);
+    if (word && meanings.length >= 1) out.push({ word, meanings });
+  });
+  return out;
+}
+
+// ALL_CARDS = tüm bölümlerdeki kelimeler
+Object.values(SECTIONS).forEach(grup => {
+  Object.values(grup).forEach(raw => {
+    ALL_CARDS = ALL_CARDS.concat(parseCards(raw));
+  });
+});
+
+// Accordion render
+function renderAcc() {
+  const container = document.getElementById('acc-render');
+  let html = '';
+  Object.entries(SECTIONS).forEach(([grupAdi, bolumler]) => {
+    const grupId = 'acc-' + grupAdi;
+    const totalCount = Object.values(bolumler).reduce((s, r) => s + parseCards(r).length, 0);
+    html += `<div class="acc-group">
+      <button class="acc-header" id="${grupId}-btn" onclick="toggleAcc('${grupId}')">
+        <span>${grupAdi} <span style="font-size:12px;font-weight:400;color:var(--muted)">${totalCount} kelime</span></span>
+        <span class="acc-arrow">▼</span>
+      </button>
+      <div class="acc-body" id="${grupId}-body">
+        <div class="sec-list">`;
+    Object.entries(bolumler).forEach(([bolumAdi, raw]) => {
+      const count = parseCards(raw).length;
+      html += `<button class="sec-btn" onclick="startSection('${grupAdi}','${bolumAdi}')">
+        ${bolumAdi} <span class="sec-count">${count} kelime</span>
+      </button>`;
+    });
+    html += `</div></div></div>`;
+  });
+  container.innerHTML = html;
+}
+renderAcc();
+
+// Kelimeler listesi render — METIN başlıkları SECTIONS key'leri
+const METIN_LABELS = {
+  "T1": "Metin 1 – Johannes Gutenberg"
+};
+function renderWords(filter) {
+  const q = (filter || '').toLowerCase().trim();
+  let html = '';
+  Object.entries(SECTIONS).forEach(([grupAdi, bolumler]) => {
+    Object.entries(bolumler).forEach(([bolumAdi, raw]) => {
+      const cards = parseCards(raw);
+      const filtered = q ? cards.filter(c =>
+        c.word.toLowerCase().includes(q) ||
+        (TURKISH[c.word]||'').toLowerCase().includes(q) ||
+        c.meanings.some(m => m.includes(q))
+      ) : cards;
+      if (filtered.length === 0) return;
+      const label = METIN_LABELS[bolumAdi] || (grupAdi + ' – ' + bolumAdi);
+      html += `<div class="metin-group">
+        <div class="metin-title">${label}</div>`;
+      filtered.forEach(c => {
+        const tr = TURKISH[c.word] || '';
+        html += `<div class="word-item">
+          <div class="w-de">${c.word}</div>
+          ${tr ? `<div class="w-tr">${tr}</div>` : ''}
+          <div class="w-syn">${c.meanings.join(', ')}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  document.getElementById('word-list').innerHTML = html || '<p style="color:var(--muted)">Sonuç bulunamadı.</p>';
+}
+
+function filterWords(val) { renderWords(val); }
+
+function resetHome() {
+  document.querySelectorAll('.home-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.home-pane').forEach(p => p.classList.remove('active'));
+  show('screen-home');
+}
+function homeNav(tab) {
+  document.querySelectorAll('.home-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.home-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('hnav-' + tab).classList.add('active');
+  document.getElementById('hpane-' + tab).classList.add('active');
+  if (tab === 'kelimeler') renderWords('');
+}
+
+function toggleAcc(id) {
+  const btn = document.getElementById(id + '-btn');
+  const body = document.getElementById(id + '-body');
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.acc-header').forEach(b => b.classList.remove('open'));
+  if (!isOpen) { body.classList.add('open'); btn.classList.add('open'); }
+}
+
+function startWithSaved() { launchGame([...ALL_CARDS].sort(() => Math.random() - .5)); }
+function startRandom(n) {
+  const sh = [...ALL_CARDS].sort(() => Math.random() - .5);
+  launchGame(sh.slice(0, Math.min(n, sh.length)));
+}
+function startSection(grup, bolum) {
+  launchGame(parseCards(SECTIONS[grup][bolum]).sort(() => Math.random() - .5));
+}
+function launchGame(cardList) {
+  cards = cardList; cur = 0; score = 0; results = [];
+  show('screen-game'); loadCard();
+}
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function required(c) { return c.meanings.length === 1 ? 1 : 2; }
+function loadCard() {
+  flipped = false; answered = false; typed = [];
+  document.getElementById('cinner').classList.remove('fl');
+  document.getElementById('ainp').value = '';
+  document.getElementById('atags').innerHTML = '';
+  document.getElementById('afb').textContent = '';
+  document.getElementById('afb').className = 'fb';
+  document.getElementById('btnnext').disabled = true;
+  document.getElementById('aarea').style.display = 'block';
+  document.getElementById('fhint').textContent = 'Kartı çevirmek için tıkla';
+  const c = cards[cur];
+  document.getElementById('cword').textContent = c.word;
+  document.getElementById('csub').textContent = c.meanings.length + ' anlam';
+  document.getElementById('counter').textContent = (cur+1) + '/' + cards.length;
+  document.getElementById('progf').style.width = ((cur / cards.length) * 100) + '%';
+  document.getElementById('lscore').textContent = score;
+  document.getElementById('cdefs').innerHTML = c.meanings.map(m =>
+    `<div class="ditem"><div class="ddot"></div><span>${m}</span></div>`).join('');
+  const req = required(c);
+  document.getElementById('albl').textContent = req === 1
+    ? 'Doğru anlamı yaz ve Enter\'a bas:'
+    : 'En az 2 anlamı yaz — her cevabı Enter ile ekle:';
+  const inp = document.getElementById('ainp');
+  inp.focus();
+  inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); addAns(); } };
+  loadTr(c);
+}
+function toggleTr() {
+  const body = document.getElementById("tr-body");
+  const arrow = document.getElementById("tr-arrow");
+  const isOpen = body.style.display !== "none";
+  body.style.display = isOpen ? "none" : "block";
+  arrow.textContent = isOpen ? "▼" : "▲";
+}
+function loadTr(c) {
+  const body = document.getElementById("tr-body");
+  const tr = TURKISH[c.word];
+  if (tr) {
+    body.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin:2px 0;"><div style="width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;"></div><span>${tr}</span></div>`;
+  } else {
+    body.innerHTML = `<span style="color:var(--muted);font-size:13px;">Türkçe anlam eklenmedi.</span>`;
+  }
+  body.style.display = "none";
+  const arrow = document.getElementById("tr-arrow");
+  if(arrow) arrow.textContent = "▼";
+}
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById('cinner').classList.toggle('fl', flipped);
+  document.getElementById('fhint').textContent = flipped ? 'Geri çevirmek için tıkla' : 'Kartı çevirmek için tıkla';
+}
+function norm(s) {
   return s.trim().toLowerCase()
     .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
-    .replace(/\s+/g,' ');
+    .replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
 }
-function isMatch(a,m){return norm(a)===norm(m);}
-function levenshtein(a,b){const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
-function isNear(a,m){const na=norm(a),nb=norm(m);if(na===nb)return false;const maxD=nb.length<=5?1:2;if(levenshtein(na,nb)<=maxD)return true;if(na.length>=4&&nb.length>=4&&nb.startsWith(na.slice(0,4)))return true;return false;}
-function tagStatus(a,meanings){if(meanings.some(m=>isMatch(a,m)))return'ok';if(meanings.some(m=>isNear(a,m)))return'near';return'fail';}
-function required(c){return c.meanings.length===1?1:2;}
-
-window.switchAuthTab=function(t){document.getElementById('tab-login').className='auth-tab'+(t==='login'?' sel':'');document.getElementById('tab-register').className='auth-tab'+(t==='register'?' sel':'');document.getElementById('auth-login').style.display=t==='login'?'block':'none';document.getElementById('auth-register').style.display=t==='register'?'block':'none';};
-
-window.doRegister=async function(){
-  const u=document.getElementById('reg-user').value.trim();
-  const p=document.getElementById('reg-pass').value;
-  const p2=document.getElementById('reg-pass2').value;
-  const err=document.getElementById('reg-err');
-  err.style.display='none';
-  if(!u||!p){err.style.display='block';err.textContent='Kullanici adi ve sifre gerekli.';return;}
-  if(p!==p2){err.style.display='block';err.textContent='Sifreler eslesmiyor.';return;}
-  if(p.length<6){err.style.display='block';err.textContent='Sifre en az 6 karakter olmali.';return;}
-  try{const cred=await createUserWithEmailAndPassword(auth,toEmail(u),p);await updateProfile(cred.user,{displayName:u});await setDoc(doc(db,'users',cred.user.uid),{name:u,progress:{}});}
-  catch(e){err.style.display='block';err.textContent=e.code==='auth/email-already-in-use'?'Bu kullanici adi alinmis.':'Bir hata olustu.';}
-};
-
-window.doLogin=async function(){
-  const u=document.getElementById('login-user').value.trim();
-  const p=document.getElementById('login-pass').value;
-  const err=document.getElementById('login-err');
-  err.style.display='none';
-  if(!u||!p){err.style.display='block';err.textContent='Kullanici adi ve sifre gir.';return;}
-  try{await signInWithEmailAndPassword(auth,toEmail(u),p);}
-  catch(e){err.style.display='block';err.textContent='Kullanici adi veya sifre hatali.';}
-};
-
-window.doLogout=async function(){await signOut(auth);};
-async function loadProgress(){try{const snap=await getDoc(doc(db,'users',currentUser.uid));userProgress=snap.exists()?(snap.data().progress||{}):{};} catch(e){userProgress={};}}
-async function saveProgress(){try{await updateDoc(doc(db,'users',currentUser.uid),{progress:userProgress});}catch(e){}}
-function isDone(ch){return userProgress[ch.id]?.completed===true;}
-
-async function showMenu(){
-  show('screen-menu');
-  document.getElementById('user-name-display').textContent=currentUser.displayName||'—';
-  ['main','words','chapters'].forEach(id=>{document.getElementById('mtab-'+id).className='menu-tab';document.getElementById('pane-'+id).style.display='none';});
-}
-
-window.switchMenuTab=function(t){
-  ['main','words','chapters'].forEach(id=>{document.getElementById('mtab-'+id).className='menu-tab'+(t===id?' sel':'');document.getElementById('pane-'+id).style.display=t===id?'block':'none';});
-  if(t==='words')renderWordList();
-  if(t==='chapters')renderChapters();
-};
-
-window.renderWordList=function(){
-  const q=(document.getElementById('wl-search').value||'').toLowerCase();
-  let html='';
-  CHAPTERS.forEach(ch=>{
-    const filtered=ch.cards.filter(c=>!q||c.word.toLowerCase().includes(q)||c.meanings.some(m=>m.toLowerCase().includes(q))||(c.tr&&c.tr.toLowerCase().includes(q)));
-    if(!filtered.length)return;
-    html+=`<div class="wl-group">${ch.title}</div>`;
-    filtered.forEach(c=>{html+=`<div class="wl-item"><span class="wl-word">${c.word}</span>${c.tr?`<span class="wl-tr">${c.tr}</span>`:''}<span class="wl-defs">${c.meanings.join(', ')}</span></div>`;});
+function exactMatch(input, meaning) { return norm(input) === norm(meaning); }
+function addAns() {
+  if (answered) return;
+  const inp = document.getElementById('ainp');
+  const val = inp.value.trim();
+  if (!val) return;
+  val.split(',').map(p => p.trim()).filter(p => p).forEach(p => {
+    if (!typed.find(t => norm(t) === norm(p))) typed.push(p.toLowerCase());
   });
-  document.getElementById('word-list').innerHTML=html||'<p style="color:var(--muted);font-size:14px;margin-top:8px;">Sonuc bulunamadi.</p>';
-};
-
-async function renderChapters(){
-  document.getElementById('spinner-chapters').style.display='block';
-  document.getElementById('chapter-list').style.display='none';
-  await loadProgress();
-  document.getElementById('chapter-list').innerHTML=CHAPTERS.map((ch)=>{
-    const prog=userProgress[ch.id];
-    const bestScore=prog?(prog.bestScore||0):0;
-    const totalPossible=ch.cards.reduce((s,c)=>s+c.meanings.length,0);
-    const pct=totalPossible>0?Math.round((bestScore/totalPossible)*100):0;
-    const played=prog!==undefined&&prog!==null;
-    return`<div class="chapter-card" onclick="startChapter(${ch.id})">
-      <div class="ch-top">
-        <div>
-          <div class="ch-num">Bolum ${ch.id}</div>
-          <div class="ch-title">${ch.title}</div>
-          <div class="ch-count">${ch.cards.length} kelime</div>
-        </div>
-        <span style="font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap;">${played?`%${pct}`:''}</span>
-      </div>
-      ${played?`<div class="ch-prog"><div class="ch-prog-fill" style="width:${pct}%"></div></div>`:''}
+  inp.value = '';
+  renderTags(); checkLive();
+}
+function renderTags() {
+  const c = cards[cur];
+  document.getElementById('atags').innerHTML = typed.map(a => {
+    const ok = c.meanings.some(m => exactMatch(a, m));
+    return `<span class="${ok ? 'tok' : 'tfail'}">${a}</span>`;
+  }).join('');
+}
+function checkLive() {
+  if (answered) return;
+  const c = cards[cur];
+  const matched = c.meanings.filter(m => typed.some(a => exactMatch(a, m)));
+  const req = required(c);
+  const fb = document.getElementById('afb');
+  if (matched.length >= req) {
+    const full = matched.length >= c.meanings.length;
+    const pts = full ? c.meanings.length : matched.length;
+    fb.textContent = full
+      ? `Mükemmel! Tüm anlamları buldun. +${pts} puan`
+      : `${matched.length}/${c.meanings.length} anlam bulundu. +${pts} puan`;
+    fb.className = 'fb good';
+    document.getElementById('btnnext').disabled = false;
+  } else {
+    if (typed.length > 0 && matched.length === 0) {
+      fb.textContent = 'Eşleşen anlam bulunamadı. Tam kelimeyi yaz.';
+    } else if (matched.length > 0 && matched.length < req) {
+      fb.textContent = `${matched.length} anlam bulundu, en az ${req} gerekli.`;
+    } else { fb.textContent = ''; }
+    fb.className = 'fb';
+  }
+}
+function finishCard(skipped) {
+  if (answered) return;
+  answered = true;
+  const c = cards[cur];
+  const matched = c.meanings.filter(m => typed.some(a => exactMatch(a, m)));
+  const req = required(c);
+  let pts = 0, status = 'fail';
+  if (!skipped) {
+    if (matched.length >= c.meanings.length) { pts = c.meanings.length; status = 'ok'; }
+    else if (matched.length >= req)          { pts = matched.length;    status = 'part'; }
+  }
+  score += pts;
+  results.push({ word: c.word, meanings: c.meanings, status, pts });
+  document.getElementById('lscore').textContent = score;
+  document.getElementById('btnnext').disabled = false;
+  if (!flipped) flipCard();
+  document.getElementById('aarea').style.display = 'none';
+}
+function skipCard() { finishCard(true); nextCard(); }
+function nextCard() {
+  if (!answered) { finishCard(false); return; }
+  cur++;
+  if (cur >= cards.length) { showResults(); return; }
+  loadCard();
+}
+function showResults() {
+  document.getElementById('progf').style.width = '100%';
+  const ok   = results.filter(r => r.status === 'ok').length;
+  const part = results.filter(r => r.status === 'part').length;
+  document.getElementById('rscore').textContent   = score;
+  document.getElementById('rcorrect').textContent = ok;
+  document.getElementById('rpartial').textContent = part;
+  document.getElementById('rlist').innerHTML = results.map(r => {
+    const bc = r.status==='ok' ? 'bok' : r.status==='part' ? 'bpart' : 'bfail';
+    const bt = r.status==='ok' ? 'Tam' : r.status==='part' ? 'Kısmen' : 'Atlandı';
+    return `<div class="ritem">
+      <span class="bdg ${bc}">${bt}</span>
+      <span class="rword">${r.word}</span>
+      <span class="rdefs">${r.meanings.join(', ')}</span>
+      <span class="rpts">${r.pts > 0 ? '+'+r.pts+' puan' : '0 puan'}</span>
     </div>`;
   }).join('');
-  document.getElementById('spinner-chapters').style.display='none';
-  document.getElementById('chapter-list').style.display='flex';
-}
-
-window.goMenu=function(){showMenu();};
-window.startRandom=function(n){isRandomMode=true;currentChapter=null;const sh=[...ALL_CARDS].sort(()=>Math.random()-.5);cards=n?sh.slice(0,Math.min(n,sh.length)):sh;cur=0;score=0;results=[];show('screen-game');loadCard();};
-window.startChapter=function(id){isRandomMode=false;currentChapter=CHAPTERS.find(c=>c.id===id);cards=[...currentChapter.cards].sort(()=>Math.random()-.5);cur=0;score=0;results=[];show('screen-game');loadCard();};
-
-function loadCard(){
-  flipped=false;answered=false;typed=[];
-  document.getElementById('cinner').classList.remove('fl');
-  document.getElementById('ainp').value='';
-  document.getElementById('atags').innerHTML='';
-  document.getElementById('afb').textContent='';
-  document.getElementById('afb').className='fb';
-  document.getElementById('btnnext').disabled=true;
-  document.getElementById('aarea').style.display='block';
-  document.getElementById('fhint').textContent='Karti cevirmek icin tikla';
-  document.getElementById('tr-toggle').className='tr-toggle-btn';
-  document.getElementById('tr-body').className='tr-body';
-  const c=cards[cur];
-  document.getElementById('cword').textContent=c.word;
-  document.getElementById('csub').textContent=c.meanings.length+' anlam';
-  document.getElementById('counter').textContent=(cur+1)+'/'+cards.length;
-  document.getElementById('progf').style.width=((cur/cards.length)*100)+'%';
-  document.getElementById('lscore').textContent=score;
-  document.getElementById('cdefs').innerHTML=c.meanings.map(m=>`<div class="ditem"><div class="ddot"></div><span>${m}</span></div>`).join('');
-  if(c.tr){document.getElementById('tr-wrap').style.display='block';document.getElementById('tr-body').textContent=c.tr;}
-  else document.getElementById('tr-wrap').style.display='none';
-  document.getElementById('albl').textContent=required(c)===1?'Dogru anlami yaz ve Enter a bas:':'En az 2 anlami yaz — her cevabi Enter ile ekle:';
-  const inp=document.getElementById('ainp');inp.focus();
-  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();addAns();}};
-}
-
-window.flipCard=function(){flipped=!flipped;document.getElementById('cinner').classList.toggle('fl',flipped);document.getElementById('fhint').textContent=flipped?'Geri cevirmek icin tikla':'Karti cevirmek icin tikla';};
-window.toggleTr=function(){const btn=document.getElementById('tr-toggle'),body=document.getElementById('tr-body'),open=body.classList.contains('open');btn.className='tr-toggle-btn'+(open?'':' open');body.className='tr-body'+(open?'':' open');};
-
-window.addAns=function(){
-  if(answered)return;
-  const inp=document.getElementById('ainp');
-  const val=inp.value.trim();if(!val)return;
-  val.split(',').map(p=>p.trim()).filter(p=>p).forEach(p=>{if(!typed.some(t=>norm(t)===norm(p)))typed.push(p);});
-  inp.value='';renderTags();checkLive();
-};
-
-function renderTags(){
-  const c=cards[cur];
-  document.getElementById('atags').innerHTML=typed.map(a=>{const s=tagStatus(a,c.meanings);return`<span class="${s==='ok'?'tok':s==='near'?'tnear':'tfail'}">${a}</span>`;}).join('');
-}
-
-function checkLive(){
-  if(answered)return;
-  const c=cards[cur];
-  const matched=c.meanings.filter(m=>typed.some(a=>isMatch(a,m)));
-  const nearOnly=typed.some(a=>tagStatus(a,c.meanings)==='near');
-  const req=required(c);
-  const fb=document.getElementById('afb');
-  if(matched.length>=req){const full=matched.length>=c.meanings.length;const pts=full?c.meanings.length:matched.length;fb.textContent=full?`Mukemmel! Tum anlamlari buldun. +${pts} puan`:`${matched.length}/${c.meanings.length} anlam bulundu. +${pts} puan`;fb.className='fb good';document.getElementById('btnnext').disabled=false;}
-  else if(nearOnly&&matched.length<req){fb.textContent='Cok yakindın! Yazimi kontrol et.';fb.className='fb near';}
-  else if(typed.length>0&&matched.length===0){fb.textContent='Eslesen anlam yok. Tam kelimeyi yaz.';fb.className='fb';}
-  else if(matched.length>0&&matched.length<req){fb.textContent=`${matched.length} anlam bulundu, en az ${req} gerekli.`;fb.className='fb';}
-  else{fb.textContent='';fb.className='fb';}
-}
-
-function finishCard(skipped){
-  if(answered)return;answered=true;
-  const c=cards[cur];
-  const matched=c.meanings.filter(m=>typed.some(a=>isMatch(a,m)));
-  const req=required(c);
-  let pts=0,status='fail';
-  if(!skipped){if(matched.length>=c.meanings.length){pts=c.meanings.length;status='ok';}else if(matched.length>=req){pts=matched.length;status='part';}}
-  score+=pts;results.push({word:c.word,meanings:c.meanings,status,pts});
-  document.getElementById('lscore').textContent=score;
-  document.getElementById('btnnext').disabled=false;
-  if(!flipped)flipCard();
-  document.getElementById('aarea').style.display='none';
-}
-
-window.skipCard=function(){finishCard(true);nextCard();};
-window.nextCard=function(){if(!answered){finishCard(false);return;}cur++;if(cur>=cards.length){showResults();return;}loadCard();};
-window.restartGame=function(){cur=0;score=0;results=[];cards=[...cards].sort(()=>Math.random()-.5);show('screen-game');loadCard();};
-
-async function showResults(){
-  document.getElementById('progf').style.width='100%';
-  const ok=results.filter(r=>r.status==='ok').length;
-  const part=results.filter(r=>r.status==='part').length;
-  const wrong=results.filter(r=>r.status==='fail').length;
-  document.getElementById('rscore').textContent=score;
-  document.getElementById('rcorrect').textContent=ok;
-  document.getElementById('rpartial').textContent=part;
-  document.getElementById('rlist').innerHTML=results.map(r=>{
-    const bc=r.status==='ok'?'bok':r.status==='part'?'bpart':'bfail';
-    const bt=r.status==='ok'?'Tam':r.status==='part'?'Kismen':'Atlandi';
-    return`<div class="ritem"><span class="bdg ${bc}">${bt}</span><span class="rword">${r.word}</span><span class="rdefs">${r.meanings.join(', ')}</span><span class="rpts">${r.pts>0?'+'+r.pts+' puan':'0 puan'}</span></div>`;
-  }).join('');
-  let justCompleted=false;
-  if(!isRandomMode&&currentChapter){
-    const chId=currentChapter.id;const prev=userProgress[chId]||{};const newBest=Math.max(score,prev.bestScore||0);
-    const completed=wrong<=2;const wasDone=prev.completed===true;justCompleted=completed&&!wasDone;
-    userProgress[chId]={completed:completed||wasDone,bestScore:newBest};await saveProgress();
-  }
-  document.getElementById('complete-banner').style.display=justCompleted?'block':'none';
   show('screen-result');
 }
-
-onAuthStateChanged(auth,async user=>{
-  if(user){currentUser=user;await showMenu();}
-  else{currentUser=null;show('screen-auth');}
-});
+function restartGame() {
+  cur = 0; score = 0; results = [];
+  cards = cards.sort(() => Math.random() - .5);
+  show('screen-game'); loadCard();
+}
 </script>
 </body>
 </html>
