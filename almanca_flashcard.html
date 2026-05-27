@@ -11,12 +11,14 @@
     --correct: #2e7d57; --correct-bg: #4caf8320;
     --wrong: #a33030; --wrong-bg: #e05a5a20;
     --partial: #8a5c00; --partial-bg: #f5a62320;
+    --accent: #4a7fd4;
     --radius: 12px; --radius-sm: 8px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0e0e0f; --surface: #1c1c1f; --surface2: #161618;
-      --text: #f0ece2; --muted: #6b6860; --border: #2a2a2e;
+      --bg: #12151f; --surface: #1a1e2e; --surface2: #161929;
+      --text: #f0ece2; --muted: #6b6860; --border: #2a2f45;
+      --accent: #6b9ff0;
     }
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,11 +26,10 @@
     background: var(--bg); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh; display: flex; justify-content: center;
-    padding: 28px 16px 60px;
+    padding: 0 16px 60px;
   }
-  #app { width: 100%; max-width: 680px; }
+  #app { width: 100%; max-width: 780px; }
   .screen { display: none; } .screen.active { display: block; }
-  h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
   h2 { font-size: 18px; font-weight: 500; margin-bottom: 10px; }
   p  { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
   textarea {
@@ -53,7 +54,7 @@
   }
   .prog { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
   .progf { height: 100%; background: var(--text); transition: width .3s; }
-  .topbar { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
   .card-wrap { perspective: 1000px; height: 260px; margin: 0 0 6px; cursor: pointer; user-select: none; }
   .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.4,0,.2,1); }
   .card-inner.fl { transform: rotateY(180deg); }
@@ -94,43 +95,112 @@
   .rword { font-weight: 500; font-size: 14px; min-width: 120px; }
   .rdefs { font-size: 13px; color: var(--muted); flex: 1; }
   .rpts  { font-size: 13px; color: var(--muted); white-space: nowrap; }
-  .tab-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-  .tab-btn { padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 13px; cursor: pointer; }
-  .tab-btn.sel { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* Accordion */
+  .acc-group { margin-bottom: 8px; }
+  .acc-header {
+    width: 100%; text-align: left; padding: 11px 16px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--surface); color: var(--text);
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: opacity .15s;
+  }
+  .acc-header:hover { opacity: 0.75; }
+  .acc-header .acc-arrow { font-size: 11px; color: var(--muted); transition: transform .2s; }
+  .acc-header.open .acc-arrow { transform: rotate(180deg); }
+  .acc-body { display: none; padding: 10px 0 4px 0; }
+  .acc-body.open { display: block; }
+  .sec-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sec-btn {
+    padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-size: 13px; cursor: pointer; transition: opacity .15s;
+  }
+  .sec-btn:hover { opacity: 0.7; }
+  .sec-btn .sec-count { font-size: 11px; color: var(--muted); margin-left: 5px; }
+
+  /* Ana sayfa */
+  .home-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 0 24px;
+    font-size: 14px; color: var(--muted);
+  }
+  .home-header strong { color: var(--text); }
+  .home-nav {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    overflow: hidden; margin-bottom: 24px;
+  }
+  .home-nav-btn {
+    padding: 14px 10px; background: var(--surface); border: none; border-right: 1px solid var(--border);
+    color: var(--muted); font-size: 14px; cursor: pointer; transition: background .15s, color .15s;
+  }
+  .home-nav-btn:last-child { border-right: none; }
+  .home-nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .home-nav-btn.active { background: var(--surface2); color: var(--text); font-weight: 600; }
+  .home-pane { display: none; }
+  .home-pane.active { display: block; }
+
+  /* Kelimeler ekranı */
+  .word-search {
+    width: 100%; padding: 11px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text); font-size: 14px; margin-bottom: 20px;
+  }
+  .word-search:focus { outline: none; border-color: var(--text); }
+  .word-search::placeholder { color: var(--muted); }
+  .metin-group { margin-bottom: 24px; }
+  .metin-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  }
+  .word-item {
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .word-item .w-de { font-size: 15px; font-weight: 700; color: var(--accent); }
+  .word-item .w-tr { font-size: 13px; color: var(--accent); opacity: 0.75; margin: 1px 0 2px; }
+  .word-item .w-syn { font-size: 13px; color: var(--muted); }
 </style>
 </head>
 <body>
 <div id="app">
 
-<div id="screen-input" class="screen active">
-  <h1>🇩🇪 Almanca Flash Kartlar</h1>
-  <p style="margin-bottom:18px;">Kayıtlı kelimelerle oyna ya da kendi kelimelerini ekle.</p>
-  <div class="tab-row">
-    <button class="tab-btn sel" id="tab-saved" onclick="switchTab('saved')">Kayıtlı Kelimeler</button>
-    <button class="tab-btn" id="tab-custom" onclick="switchTab('custom')">Kendi Kelimelerimi Gir</button>
+<!-- ANA SAYFA -->
+<div id="screen-home" class="screen active">
+  <div class="home-header">
+    <span>Hoş geldin</span>
+    <button class="btn" style="padding:5px 14px;font-size:13px;" onclick="resetHome()">Çıkış</button>
   </div>
-  <div id="pane-saved">
-    <p><strong id="saved-count">0</strong> kelime yüklendi.</p>
-    <div class="row">
+  <div class="home-nav">
+    <button class="home-nav-btn" id="hnav-karisik" onclick="homeNav('karisik')">Karışık Oyna</button>
+    <button class="home-nav-btn" id="hnav-kelimeler" onclick="homeNav('kelimeler')">Kelimeler</button>
+    <button class="home-nav-btn" id="hnav-bolumler" onclick="homeNav('bolumler')">Bölümler</button>
+  </div>
+
+  <div class="home-pane" id="hpane-karisik">
+    <div class="row" style="margin-top:0;">
       <button class="btn primary" onclick="startWithSaved()">Tümüyle Oyna</button>
       <button class="btn" onclick="startRandom(20)">Rastgele 20 Kart</button>
       <button class="btn" onclick="startRandom(10)">Rastgele 10 Kart</button>
     </div>
   </div>
-  <div id="pane-custom" style="display:none;">
-    <div class="info-box">kelime = anlam1, anlam2, anlam3</div>
-    <p>Her satıra bir kart. Tek anlamlı kartlarda 1 doğru cevap yeterli.</p>
-    <textarea id="winput" placeholder="Kelimelerini buraya yaz..."></textarea>
-    <div id="errmsg" class="error" style="display:none;"></div>
-    <div class="row"><button class="btn primary" onclick="startCustom()">Oyunu Başlat</button></div>
+
+  <div class="home-pane" id="hpane-kelimeler">
+    <input class="word-search" id="word-search" type="text" placeholder="Kelime ara..." oninput="filterWords(this.value)" />
+    <div id="word-list"></div>
+  </div>
+
+  <div class="home-pane" id="hpane-bolumler">
+    <div id="acc-render"></div>
   </div>
 </div>
 
+<!-- OYUN EKRANI -->
 <div id="screen-game" class="screen">
   <div class="prog"><div class="progf" id="progf"></div></div>
   <div class="topbar">
     <span id="counter">1/1</span>
     <span>Puan: <strong id="lscore">0</strong></span>
+    <button class="btn" style="padding:5px 14px;font-size:13px;" onclick="show('screen-home')">Menü</button>
   </div>
   <div class="card-wrap" onclick="flipCard()">
     <div class="card-inner" id="cinner">
@@ -159,8 +229,15 @@
     <button class="btn" onclick="skipCard()">Atla</button>
     <button class="btn primary" id="btnnext" onclick="nextCard()" disabled>Sonraki →</button>
   </div>
+  <div style="margin-top:10px;">
+    <button class="btn" onclick="toggleTr()" style="width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+      <span>Türkçe anlamı göster</span><span id="tr-arrow" style="font-size:11px;color:var(--muted);">▼</span>
+    </button>
+    <div id="tr-body" style="display:none;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);font-size:14px;line-height:1.9;"></div>
+  </div>
 </div>
 
+<!-- SONUÇ EKRANI -->
 <div id="screen-result" class="screen">
   <h2>Tur Bitti!</h2>
   <div class="sgrid">
@@ -171,13 +248,15 @@
   <div id="rlist"></div>
   <div class="row" style="margin-top:20px;">
     <button class="btn primary" onclick="restartGame()">Tekrar Oyna</button>
-    <button class="btn" onclick="show('screen-input')">Ana Menü</button>
+    <button class="btn" onclick="show('screen-home')">← Menü</button>
   </div>
 </div>
 
 </div>
 <script>
-const SAVED_RAW = `Kindheit = Kinderjahre, frühe Lebensjahre
+const SECTIONS = {
+  "Vize": {
+    "T1": `Kindheit = Kinderjahre, frühe Lebensjahre
 Verbringen = aufhalten
 Jugend = Pubertät, Jugendzeit
 Gestorben = verstorben, Tod, hingeschieden, sein Leben verlieren
@@ -302,7 +381,7 @@ Themen = Gegenstand, Sache, Inhalt, Stoff, Thematik
 Zusammenhang = Beziehung, Verbindung, Bezug, Kontext, Verhältnis, Verknüpfung
 Aufmerksamkeit = Konzentration, Beachtung, Achtsamkeit, Fokus, Interesse, Zuwendung, Achtung
 Hilfreich = nützlich, förderlich, sinnvoll
-Häufig = oft, vielfach, regelmäßig
+H�ufig = oft, vielfach, regelmäßig
 Situation = Lage, Zustand, Umstand
 Benötigen = brauchen, erfordern, voraussetzen
 Gesteigert = erhöht, verbessert, verstärkt
@@ -320,7 +399,127 @@ Zunächst = vorerst, zuerst, erst
 Erstmals = zum ersten Mal, erstmalig
 Preiswert = günstig, billig
 Allerdings = sondern, aber
-Bisher = bis jetzt, bislang`;
+Bisher = bis jetzt, bislang`
+  },
+  "Final": {
+    "T26": `Organismus = Mensch, Körper
+Zumindest = Mindestens, wenigstens
+Natürlich = sicher, logisch
+Rechtzeitig = pünktlich, zeitnah
+Zuständig = verantwortlich, beauftragt
+Verarbeiten = bearbeiten, erfassen
+Jedoch = aber, dennoch
+Bewusst = wissentlich, willentlich`,
+    "T27": `Zusammenbruch = Kollaps, Zerstörung, Destruktion, Zerfall
+Vermuten = glauben, vermutlich
+Betragen = sich belaufen auf, ausmachen
+Infektion = Kontamination, Infizierung, Seuche`,
+    "T30": `Sammelbegriff = Oberbegriff, Gesamtbezeichnung, Gattungsbegriff
+Erkrankung = Leiden, Krankheit
+Zerstören = kaputt machen, ruinieren
+Vorübergehend = temporär, kurzzeitig
+Umfassen = beinhalten, enthalten, abdecken
+Meist = oft, häufig, beliebt`,
+    "T31": `Keineswegs = keinesfalls, niemals, gar nicht
+Abgeordneter = Mandat, Parlamentarier
+Schnell = blitzschnell, rasch, blitzartig
+Redner = Sprecher, Referent
+Kompliziert = schwierig, komplex
+Amt = Behörde, Dienststelle, Institut
+Verfahren = Vorgang, Ablauf, Prozess
+Bewältigen = meistern, bewirken, überwinden`,
+    "T34": `Verfassung = Grundgesetz, Staatsordnung, Richtlinien
+Besonderheit = Merkmal, Qualifikation, Eigenart
+Dort = da, darin
+Bürger = Einwohner, Volk, Untertan
+Beitrag = Anteil, Mitwirkung, Zusatz
+Sozial = gesellschaftlich, gemeinschaftlich, volkstümlich`,
+    "T35": `Lage = Situation, Zustand, Position
+Bewerber = Antragsteller, Kandidat, Interessent
+Schwierigkeiten = Hürde, Komplikation, Problem, Sorgen
+Arbeitslos = brotlos, erwerbslos, arbeitssuchend
+Auswahl = Selektion, Wahl, Entscheidung`,
+    "T39": `Mannigfaltig = divers, zahlreich, vielfältig, verschieden
+Bedürfnis = Bedarf, Wille, Ansprüche
+Interesse = Motivation, Aufmerksamkeit, Antlegen
+Voraussetzung = Bedingung, Grundlage, Erfordernisse
+Recht = Gesetz, Anspruch, Rechtsordnung`,
+    "T41": `Regelung = Ordnung, Norm, Richtlinie
+Gesellschaftlich = sozial, gemeinschaftlich, volksmäßig
+Beseitigen = entfernen, abschaffen, vernichten
+Zahlreich = viel, unzählig, etlich
+Bedingung = Voraussetzung, Kondition, Umstand
+Anspruch = Recht, Forderung, Anrecht
+Bereich = Fach, Sektor, Gebiet`,
+    "T43": `Menge = Anzahl, Volumen, Vielzahl, Masse
+Gelangen = erreichen, hinkommen, am Ziel ankommen
+Anstieg = Wachstum, Zunahme, Erhöhung, Steigerung
+Folge = Konsequenz, Auswirkung, Resultat
+Problem = Konflikt, Hürde, Haken, Komplexität
+Abfall = Müll, Entsorgung, Reststoffe
+Scheinbar = vermutlich, eventuell, anscheinend, womöglich, vermeintlich`
+  }
+};
+
+const TURKISH = {
+  "Organismus": "Organizma, canlı varlık",
+  "Zumindest": "En azından, hiç olmazsa",
+  "Natürlich": "Doğal, elbette, tabii ki",
+  "Rechtzeitig": "Zamanında, vaktinde",
+  "Zuständig": "Yetkili, sorumlu",
+  "Verarbeiten": "İşlemek, sindirmek",
+  "Jedoch": "Halbuki, ancak, yine de",
+  "Bewusst": "Bilinçli, farkında",
+  "Zusammenbruch": "Çöküş, çökme, kriz",
+  "Vermuten": "Tahmin etmek, sanmak",
+  "Betragen": "Tutmak (miktar olarak), davranmak",
+  "Infektion": "Enfeksiyon, bulaşma",
+  "Sammelbegriff": "Genel kavram, çatı terim",
+  "Erkrankung": "Hastalık, rahatsızlık",
+  "Zerstören": "Tahrip etmek, yıkmak, yok etmek",
+  "Vorübergehend": "Geçici olarak, muvakkaten",
+  "Umfassen": "Kapsamak, içermek",
+  "Meist": "Çoğunlukla, genellikle",
+  "Keineswegs": "Asla, hiçbir şekilde",
+  "Abgeordneter": "Milletvekili, temsilci",
+  "Schnell": "Hızlı, çabuk",
+  "Redner": "Konuşmacı, hatip",
+  "Kompliziert": "Karmaşık, çetrefilli",
+  "Amt": "Makam, resmi görev, daire",
+  "Verfahren": "Yöntem, usul, dava, süreç",
+  "Bewältigen": "Üstesinden gelmek, başarmak",
+  "Verfassung": "Anayasa, durum/hal",
+  "Besonderheit": "Özellik, tuhaflık",
+  "Dort": "Orada, oraya",
+  "Bürger": "Vatandaş, yurttaş",
+  "Beitrag": "Katkı, aidat, pay",
+  "Sozial": "Sosyal, toplumsal",
+  "Lage": "Durum, konum, vaziyet",
+  "Bewerber": "Aday, iş başvurusu yapan kişi",
+  "Schwierigkeiten": "Zorluklar, güçlükler",
+  "Arbeitslos": "İşsiz",
+  "Auswahl": "Seçim, seçme, çeşit",
+  "Mannigfaltig": "Çeşitli, türlü türlü",
+  "Bedürfnis": "İhtiyaç, gereksinim",
+  "Interesse": "İlgi, çıkar, menfaat",
+  "Voraussetzung": "Koşul, şart, önkoşul",
+  "Recht": "Hak, hukuk, doğru",
+  "Regelung": "Düzenleme, kural",
+  "Gesellschaftlich": "Toplumsal, sosyal",
+  "Beseitigen": "Ortadan kaldırmak, gidermek",
+  "Zahlreich": "Pek çok, bol sayıda",
+  "Bedingung": "Şart, koşul",
+  "Anspruch": "Hak, talep, iddia",
+  "Bereich": "Alan, bölge, sektör",
+  "Menge": "Miktar, yığın, kalabalık",
+  "Gelangen": "Ulaşmak, varmak",
+  "Anstieg": "Artış, yükseliş, yokuş",
+  "Folge": "Sonuç, takip eden, bölüm",
+  "Problem": "Problem, sorun",
+  "Abfall": "Çöp, atık, döküntü",
+  "Scheinbar": "Görünüşte, görünüşe göre, zahiri"
+};
+
 
 let ALL_CARDS = [];
 let cards=[], cur=0, score=0, results=[], typed=[], answered=false, flipped=false;
@@ -339,31 +538,103 @@ function parseCards(raw) {
   return out;
 }
 
-ALL_CARDS = parseCards(SAVED_RAW);
-document.getElementById('saved-count').textContent = ALL_CARDS.length;
+// ALL_CARDS = tüm bölümlerdeki kelimeler
+Object.values(SECTIONS).forEach(grup => {
+  Object.values(grup).forEach(raw => {
+    ALL_CARDS = ALL_CARDS.concat(parseCards(raw));
+  });
+});
 
-function switchTab(t) {
-  document.getElementById('tab-saved').className = 'tab-btn' + (t==='saved' ? ' sel' : '');
-  document.getElementById('tab-custom').className = 'tab-btn' + (t==='custom' ? ' sel' : '');
-  document.getElementById('pane-saved').style.display = t==='saved' ? 'block' : 'none';
-  document.getElementById('pane-custom').style.display = t==='custom' ? 'block' : 'none';
+// Accordion render
+function renderAcc() {
+  const container = document.getElementById('acc-render');
+  let html = '';
+  Object.entries(SECTIONS).forEach(([grupAdi, bolumler]) => {
+    const grupId = 'acc-' + grupAdi;
+    const totalCount = Object.values(bolumler).reduce((s, r) => s + parseCards(r).length, 0);
+    html += `<div class="acc-group">
+      <button class="acc-header" id="${grupId}-btn" onclick="toggleAcc('${grupId}')">
+        <span>${grupAdi} <span style="font-size:12px;font-weight:400;color:var(--muted)">${totalCount} kelime</span></span>
+        <span class="acc-arrow">▼</span>
+      </button>
+      <div class="acc-body" id="${grupId}-body">
+        <div class="sec-list">`;
+    Object.entries(bolumler).forEach(([bolumAdi, raw]) => {
+      const count = parseCards(raw).length;
+      html += `<button class="sec-btn" onclick="startSection('${grupAdi}','${bolumAdi}')">
+        ${bolumAdi} <span class="sec-count">${count} kelime</span>
+      </button>`;
+    });
+    html += `</div></div></div>`;
+  });
+  container.innerHTML = html;
 }
+renderAcc();
+
+// Kelimeler listesi render — METIN başlıkları SECTIONS key'leri
+const METIN_LABELS = {
+  "T1": "Metin 1 – Johannes Gutenberg"
+};
+function renderWords(filter) {
+  const q = (filter || '').toLowerCase().trim();
+  let html = '';
+  Object.entries(SECTIONS).forEach(([grupAdi, bolumler]) => {
+    Object.entries(bolumler).forEach(([bolumAdi, raw]) => {
+      const cards = parseCards(raw);
+      const filtered = q ? cards.filter(c =>
+        c.word.toLowerCase().includes(q) ||
+        (TURKISH[c.word]||'').toLowerCase().includes(q) ||
+        c.meanings.some(m => m.includes(q))
+      ) : cards;
+      if (filtered.length === 0) return;
+      const label = METIN_LABELS[bolumAdi] || (grupAdi + ' – ' + bolumAdi);
+      html += `<div class="metin-group">
+        <div class="metin-title">${label}</div>`;
+      filtered.forEach(c => {
+        const tr = TURKISH[c.word] || '';
+        html += `<div class="word-item">
+          <div class="w-de">${c.word}</div>
+          ${tr ? `<div class="w-tr">${tr}</div>` : ''}
+          <div class="w-syn">${c.meanings.join(', ')}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  document.getElementById('word-list').innerHTML = html || '<p style="color:var(--muted)">Sonuç bulunamadı.</p>';
+}
+
+function filterWords(val) { renderWords(val); }
+
+function resetHome() {
+  document.querySelectorAll('.home-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.home-pane').forEach(p => p.classList.remove('active'));
+  show('screen-home');
+}
+function homeNav(tab) {
+  document.querySelectorAll('.home-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.home-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('hnav-' + tab).classList.add('active');
+  document.getElementById('hpane-' + tab).classList.add('active');
+  if (tab === 'kelimeler') renderWords('');
+}
+
+function toggleAcc(id) {
+  const btn = document.getElementById(id + '-btn');
+  const body = document.getElementById(id + '-body');
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.acc-header').forEach(b => b.classList.remove('open'));
+  if (!isOpen) { body.classList.add('open'); btn.classList.add('open'); }
+}
+
 function startWithSaved() { launchGame([...ALL_CARDS].sort(() => Math.random() - .5)); }
 function startRandom(n) {
   const sh = [...ALL_CARDS].sort(() => Math.random() - .5);
   launchGame(sh.slice(0, Math.min(n, sh.length)));
 }
-function startCustom() {
-  const raw = document.getElementById('winput').value;
-  const parsed = parseCards(raw);
-  const err = document.getElementById('errmsg');
-  if (parsed.length === 0) {
-    err.style.display = 'block';
-    err.textContent = 'Geçerli kart bulunamadı.';
-    return;
-  }
-  err.style.display = 'none';
-  launchGame(parsed);
+function startSection(grup, bolum) {
+  launchGame(parseCards(SECTIONS[grup][bolum]).sort(() => Math.random() - .5));
 }
 function launchGame(cardList) {
   cards = cardList; cur = 0; score = 0; results = [];
@@ -373,10 +644,7 @@ function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
-// Kaç doğru cevap gerekli: tek anlamlıda 1, çok anlamlıda 2
 function required(c) { return c.meanings.length === 1 ? 1 : 2; }
-
 function loadCard() {
   flipped = false; answered = false; typed = [];
   document.getElementById('cinner').classList.remove('fl');
@@ -401,25 +669,39 @@ function loadCard() {
     : 'En az 2 anlamı yaz — her cevabı Enter ile ekle:';
   const inp = document.getElementById('ainp');
   inp.focus();
-  inp.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addAns(); } };
+  inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); addAns(); } };
+  loadTr(c);
 }
-
+function toggleTr() {
+  const body = document.getElementById("tr-body");
+  const arrow = document.getElementById("tr-arrow");
+  const isOpen = body.style.display !== "none";
+  body.style.display = isOpen ? "none" : "block";
+  arrow.textContent = isOpen ? "▼" : "▲";
+}
+function loadTr(c) {
+  const body = document.getElementById("tr-body");
+  const tr = TURKISH[c.word];
+  if (tr) {
+    body.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin:2px 0;"><div style="width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;"></div><span>${tr}</span></div>`;
+  } else {
+    body.innerHTML = `<span style="color:var(--muted);font-size:13px;">Türkçe anlam eklenmedi.</span>`;
+  }
+  body.style.display = "none";
+  const arrow = document.getElementById("tr-arrow");
+  if(arrow) arrow.textContent = "▼";
+}
 function flipCard() {
   flipped = !flipped;
   document.getElementById('cinner').classList.toggle('fl', flipped);
   document.getElementById('fhint').textContent = flipped ? 'Geri çevirmek için tıkla' : 'Kartı çevirmek için tıkla';
 }
-
-// TAM eşleşme — kısmi eşleşme YOK
 function norm(s) {
   return s.trim().toLowerCase()
     .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
     .replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim();
 }
-function exactMatch(input, meaning) {
-  return norm(input) === norm(meaning);
-}
-
+function exactMatch(input, meaning) { return norm(input) === norm(meaning); }
 function addAns() {
   if (answered) return;
   const inp = document.getElementById('ainp');
@@ -431,7 +713,6 @@ function addAns() {
   inp.value = '';
   renderTags(); checkLive();
 }
-
 function renderTags() {
   const c = cards[cur];
   document.getElementById('atags').innerHTML = typed.map(a => {
@@ -439,7 +720,6 @@ function renderTags() {
     return `<span class="${ok ? 'tok' : 'tfail'}">${a}</span>`;
   }).join('');
 }
-
 function checkLive() {
   if (answered) return;
   const c = cards[cur];
@@ -459,13 +739,10 @@ function checkLive() {
       fb.textContent = 'Eşleşen anlam bulunamadı. Tam kelimeyi yaz.';
     } else if (matched.length > 0 && matched.length < req) {
       fb.textContent = `${matched.length} anlam bulundu, en az ${req} gerekli.`;
-    } else {
-      fb.textContent = '';
-    }
+    } else { fb.textContent = ''; }
     fb.className = 'fb';
   }
 }
-
 function finishCard(skipped) {
   if (answered) return;
   answered = true;
@@ -484,7 +761,6 @@ function finishCard(skipped) {
   if (!flipped) flipCard();
   document.getElementById('aarea').style.display = 'none';
 }
-
 function skipCard() { finishCard(true); nextCard(); }
 function nextCard() {
   if (!answered) { finishCard(false); return; }
