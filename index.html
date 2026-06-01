@@ -32,12 +32,6 @@
   .screen { display: none; } .screen.active { display: block; }
   h2 { font-size: 18px; font-weight: 500; margin-bottom: 10px; }
   p  { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
-  textarea {
-    width: 100%; min-height: 200px; font-family: 'Courier New', monospace; font-size: 13px;
-    padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); color: var(--text); resize: vertical; line-height: 1.8;
-  }
-  textarea:focus { outline: none; border-color: var(--text); }
   .btn {
     padding: 9px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border);
     background: var(--surface); color: var(--text); font-size: 14px; cursor: pointer; transition: opacity .15s;
@@ -46,12 +40,6 @@
   .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
   .btn.primary:hover { opacity: 0.82; }
   .row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .error { font-size: 13px; color: var(--wrong); margin-top: 6px; }
-  .info-box {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 10px 14px; font-family: 'Courier New', monospace; font-size: 12px;
-    color: var(--muted); line-height: 1.9; margin-bottom: 12px;
-  }
   .prog { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
   .progf { height: 100%; background: var(--text); transition: width .3s; }
   .topbar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
@@ -95,8 +83,6 @@
   .rword { font-weight: 500; font-size: 14px; min-width: 120px; }
   .rdefs { font-size: 13px; color: var(--muted); flex: 1; }
   .rpts  { font-size: 13px; color: var(--muted); white-space: nowrap; }
-
-  /* Accordion */
   .acc-group { margin-bottom: 8px; }
   .acc-header {
     width: 100%; text-align: left; padding: 11px 16px;
@@ -118,14 +104,10 @@
   }
   .sec-btn:hover { opacity: 0.7; }
   .sec-btn .sec-count { font-size: 11px; color: var(--muted); margin-left: 5px; }
-
-  /* Ana sayfa */
   .home-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 0 24px;
-    font-size: 14px; color: var(--muted);
+    padding: 20px 0 24px; font-size: 14px; color: var(--muted);
   }
-  .home-header strong { color: var(--text); }
   .home-nav {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
     border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -140,8 +122,6 @@
   .home-nav-btn.active { background: var(--surface2); color: var(--text); font-weight: 600; }
   .home-pane { display: none; }
   .home-pane.active { display: block; }
-
-  /* Kelimeler ekranı */
   .word-search {
     width: 100%; padding: 11px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm);
     background: var(--surface); color: var(--text); font-size: 14px; margin-bottom: 20px;
@@ -153,9 +133,7 @@
     font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
     color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
   }
-  .word-item {
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-  }
+  .word-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
   .word-item .w-de { font-size: 15px; font-weight: 700; color: var(--accent); }
   .word-item .w-tr { font-size: 13px; color: var(--accent); opacity: 0.75; margin: 1px 0 2px; }
   .word-item .w-syn { font-size: 13px; color: var(--muted); }
@@ -164,7 +142,6 @@
 <body>
 <div id="app">
 
-<!-- ANA SAYFA -->
 <div id="screen-home" class="screen active">
   <div class="home-header">
     <span>Hoş geldin</span>
@@ -175,7 +152,6 @@
     <button class="home-nav-btn" id="hnav-kelimeler" onclick="homeNav('kelimeler')">Kelimeler</button>
     <button class="home-nav-btn" id="hnav-bolumler" onclick="homeNav('bolumler')">Bölümler</button>
   </div>
-
   <div class="home-pane" id="hpane-karisik">
     <div class="row" style="margin-top:0;">
       <button class="btn primary" onclick="startWithSaved()">Tümüyle Oyna</button>
@@ -183,18 +159,15 @@
       <button class="btn" onclick="startRandom(10)">Rastgele 10 Kart</button>
     </div>
   </div>
-
   <div class="home-pane" id="hpane-kelimeler">
     <input class="word-search" id="word-search" type="text" placeholder="Kelime ara..." oninput="filterWords(this.value)" />
     <div id="word-list"></div>
   </div>
-
   <div class="home-pane" id="hpane-bolumler">
     <div id="acc-render"></div>
   </div>
 </div>
 
-<!-- OYUN EKRANI -->
 <div id="screen-game" class="screen">
   <div class="prog"><div class="progf" id="progf"></div></div>
   <div class="topbar">
@@ -237,7 +210,6 @@
   </div>
 </div>
 
-<!-- SONUÇ EKRANI -->
 <div id="screen-result" class="screen">
   <h2>Tur Bitti!</h2>
   <div class="sgrid">
@@ -255,179 +227,34 @@
 </div>
 <script>
 const SECTIONS = {
-  "Vize": {
-    "T1": `Kindheit = Kinderjahre, frühe Lebensjahre
-Verbringen = aufhalten
-Jugend = Pubertät, Jugendzeit
-Gestorben = verstorben, Tod, hingeschieden, sein Leben verlieren
-Geboren = gebürtig, zur/auf die Welt gekommen
-Annehmen = empfangen, akzeptieren, entgegennehmen, vermuten, davon ausgehen, für wahrscheinlich halten
-Älteste = früher
-Berühmte = bekannt, prominent, namhaft, vertraut, populär, hochgestellt, beliebt
-Nachweislich = beweisbar, erwiesenermaßen, belegt
-Buchdruck = Druckkunst, Lettern, Druckwesen
-Universität = Hochschule, Lehranstalt
-Druckverfahren = Druckmethode, Drucktechnik, Druckvorgang
-Erfinder = Entdecker, Urheber, Schöpfer
-Vermutlich = wahrscheinlich, wohl, möglicherweise, anscheinend, voraussichtlich, mutmaßlich, angenommen, eventuell
-Jedoch = aber, hingegen, dennoch
-Druckerzeugnis = Druckprodukt, Drucksachen
-Erscheinen = publizieren, herausgeben, veröffentlichen, herausbringen
-Untersuchen = analysieren, erforschen, überprüfen, recherchieren, kontrollieren
-Sinn = Bedeutung, Verstand, Geist
-Zweck = Ziel
-Anthropologie = Menschenkunde, Humanwissenschaft
-Bloß = nur
-Spezifika = Besonderheit, Merkmale, Eigenheit
-Existenz = Dasein, Bestand
-Empirisch = praktisch, experimentell, praxisbezogen, beobachtungsbasierend
-Entwickeln = hervorbringen, gestalten, entfalten, aufbauen, konzipieren, ausarbeiten, ausbilden, entstehen
-Disziplin = Bereich, Fachgebiet
-Zuhilfenahme = Verwendung, Inanspruchnahme, mittels, Nutzung, Mithilfe
-Versuchen = probieren, anstreben, sich bemühen, streben
-Erkenntnis = Befunde, Einsicht
-Begründer = Gründer, Entwickler, Urheber, Vordenker
-Zentral = Mittelpunkt, wichtig, Hauptdenker
-Autoren = Schreiber, Schriftsteller, Poet, Verfasser
-Betonen = hervorheben, unterstreichen, markieren
-Defizit = Fehlende, Mangel
-Kompensieren = ersetzen, ausgleichen
-Krankheit = leiden, Erkrankungen, Beschwerde
-Fortschreitend = zunehmend, weiterentwickelnd, progressiv, kontinuierlich, voranschreitend
-Schrumpfung = Abnahme, Reduktion, Minderung, Rückbildung
-Schwierig = kompliziert, erschwerend, anspruchsvoll, hart, mühevoll, mühsam, anstrengend
-Problem = Herausforderung
-Symptome = Anzeichen, Merkmale, Hinweise, Krankheitszeichen
-Diagnose = Feststellen, Befund, ärztliche Beurteilung, Erkennung, Untersuchungsergebnisse
-Deutlich = klar, eindeutig, offensichtlich, explizit, erkennbar, augenfällig, ausgeprägt, verständlich
-Benennung = Bezeichnung, Name, Beteiligung
-Fähigkeiten = Begabung, Kompetenz, Fertigkeiten, Qualifikation
-Wesentlich = erheblich, maßgeblich, entscheidend, grundlegend, signifikant, wichtig, fundamental, zentral, bedeutend, notwendig, elementar
-Aktuell = derzeit, momentan, gegenwärtig, jetzt, modern, neu, zeitgemäß
-Indiz = Hinweis, Merkmal, Beweis
-Ursache = Grund, Auslöser
-Gering = kaum, klein, niedrig, schwach, wenig
-Anhaltend = andauernd, stetig, dauerhaft, fortwährend, ständig, fortlaufend, konstant, permanent
-Zerstörung = Zusammenbruch, Vernichtung, Verwüstung, Beschädigung, Demolieren
-Destruktion = Verfall, Zerfall, Abbau, Ausmerzung
-Gerade = besonders, ausgerechnet, genau
-Trockener = dürre, arid, regenarm
-Gebiet = Region, Bereich, Landstrich
-Katastrophal = verheerend, fatal, zerstörerisch
-Führen zu = verursachen, bewirken, auslösen
-Wachsen = zunehmen, steigen, anwachsen
-Erhöht = gesteigert, vermehrt, höher
-Zunehmend = immer mehr, fortlaufend, progressiv
-Errichtung = Aufbau, Gründung, Erstellung
-Gigantisch = riesig, enorm, gewaltig
-Zu erwähnen = nennen, anführen, erwähnenswert finden
-Streit = Konflikt, Auseinandersetzung, Disput
-Anliegerstaaten = Nachbarstaaten, angrenzende Staaten, Uferstaaten
-Fluss = Strom, Gewässer, Fließgewässer
-Protest einlegen = Einspruch haben, Widerstand leisten, Beschwerde einreichen
-Unterbinden = stoppen, verhindern, blockieren
-Erfolgreich = gelungen, siegreich
-Rezept = Methode, Vorgehensweise, Strategie
-Sich widersetzen = sich wehren, Widerstand leisten, opponieren
-Produzieren = herstellen, fertigen, erzeugen
-Bedingungen = Voraussetzungen, Umstände, Konditionen
-Gestalten = formen, organisieren, einrichten
-Unternehmen = Firmen, Konzerne, Betriebe
-Binden an = koppeln an, knüpfen an, abhängig machen von
-Beteiligen = teilhaben lassen, einbeziehen, mitwirken lassen
-Zugang = Zutritt, Zugriff, Zugangsmöglichkeit
-Erwerben = erlangen, gewinnen, sich aneignen
-Investoren = Geldgeber, Kapitalgeber, Anleger
-Gewinne = Profite, Erträge, Einnahmen
-Garantieren = zusichern, gewährleisten, versprechen
-Ankurbeln = fördern, beleben, vorantreiben
-Entwicklung = Fortschritt, Wachstum, Entwicklungsschub
-Vergangenheit = Vorzeit, Historie, alt, frühere, vorbei
-Erforschen = untersuchen, analysieren, ergründen, ermitteln, herausfinden, erkunden, prüfen, kontrollieren, abchecken, recherchieren, durchleuchten
-Sowie = und, ebenso, nebst, zudem, ferner
-Herausarbeiten = verdeutlichen, herausstellen, herauskristallisieren
-Möglichst = soweit wie möglich, bestmöglich
-Idee = Einfall, Gedanke, Auffassung, Vorschlag
-Anstehende = bevorstehende, künftige, in Zukunft geschehen, nahend
-Erweiterung = Zunahme, Ausbau, Erhöhung, Vergrößerung, Expansion
-Umfassend = umfangreich, vollständig, ausgiebig, ausführlich
-Vielseitig = reichhaltig, vielfältig, allseitig
-Ausstellung = Präsentation, Schau, Exponate, Darbietung, Vorzeigung
-Verbundenheit = Zusammengehörigkeit, Bindung, Zugehörigkeit, Nähe
-Wertvoll = unverzichtbar, unersetzlich, kostbar, hochwertig, bedeutend, Schatz
-Verzichten = aufgeben, entsagen, unterlassen
-Aufbauen = errichten, gründen, entwickeln
-Konkurrieren = wetteifern, mithalten
-Exportieren = ausführen, verkaufen ins Ausland, liefern
-Einführen = importieren, einbringen, beziehen
-Erzeugnisse = Produkte, Güter, Waren
-Getreide = Korn, Saatgut, Feldfrucht
-Hart = streng, fest, solide, widerstandsfähig
-Weich = flexibel, soft, biegsam, flauschig, nachgiebig, geschmeidig
-Elastisch = dehnbar, biegbar
-Struktur = Aufbau, Anlage, Form, Ordnung
-Basieren = beruhen, gründen, stützen
-Produktion = Herstellung, Fertigung, Ware, Erzeugung, Anfertigung, Fabrikation
-Menge = Anzahl, Quantität, Masse, Volumen, Umfang, Kontingenz
-Preisgünstig = billig, kosteneffizient, preiswert, günstig
-Traditionell = herkömmlich, konventionell, überliefert, kulturell bedingt, klassisch
-Kraftstoff = Treibstoff, Brennstoff
-Zulassen = erlauben, ermöglichen, gestatten
-Möglichkeiten = Chancen, Optionen, Wege
-Verdrängen = ersetzen, ablösen, zurückdrängen
-Steigen = zunehmen, wachsen, sich erhöhen
-Interesse = Neugier, Aufmerksamkeit, Augenmerk, Begeisterung, Motivation, Wunsch, Belang
-Themen = Gegenstand, Sache, Inhalt, Stoff, Thematik
-Zusammenhang = Beziehung, Verbindung, Bezug, Kontext, Verhältnis, Verknüpfung
-Aufmerksamkeit = Konzentration, Beachtung, Achtsamkeit, Fokus, Interesse, Zuwendung, Achtung
-Hilfreich = nützlich, förderlich, sinnvoll
-H�ufig = oft, vielfach, regelmäßig
-Situation = Lage, Zustand, Umstand
-Benötigen = brauchen, erfordern, voraussetzen
-Gesteigert = erhöht, verbessert, verstärkt
-Trainierbar = übbar, erlernbar, ausbaubar
-Leichter = einfacher, müheloser, schneller
-Streitkräfte = Truppen, Armee
-Heute = heutzutage, zur Zeit
-Bezeichnen = nennen, definieren
-Land = Nation, Staat
-Verschieden = unterschiedlich, divers
-Meist = oft, überwiegend
-Bestehen = stammen, entstehen
-Vermindern = reduzieren, senken
-Zunächst = vorerst, zuerst, erst
-Erstmals = zum ersten Mal, erstmalig
-Preiswert = günstig, billig
-Allerdings = sondern, aber
-Bisher = bis jetzt, bislang`
-  },
   "Final": {
-    "T26": `Organismus = Mensch, Körper
-Zumindest = Mindestens, wenigstens
-Natürlich = sicher, logisch
-Rechtzeitig = pünktlich, zeitnah
-Zuständig = verantwortlich, beauftragt
-Verarbeiten = bearbeiten, erfassen
-Jedoch = aber, dennoch
-Bewusst = wissentlich, willentlich`,
-    "T27": `Zusammenbruch = Kollaps, Zerstörung, Destruktion, Zerfall
-Vermuten = glauben, vermutlich
+    "T26": `Organismus = das Lebewesen, Körper, Wesen, Mensch, das System
+Lebenswichtig = vital, lebensnotwendig, essenziell, unerlässlich, unverzichtbar
+Zumindest = mindestens, wenigstens
+Natürlich = selbstverständlich, freilich, logisch, sicher
+Rechtzeitig = pünktlich, zeitnah, termingerecht, zeitgerecht
+Zuständig = verantwortlich, verpflichtet, beauftragt, maßgeblich, kompetent
+Verarbeiten = bearbeiten, erfassen, umsetzen, aufarbeiten, ausarbeiten, behandeln, analysieren, auswerten
+Jedoch = aber, allerdings, dennoch, hingegen, doch
+Bewusst = absichtlich, wissentlich, willentlich, gezielt, gewollt`,
+    "T27": `Zusammenbruch = Kollaps, Zerstörung, Versagen, Verfall, Niedergang, Krise, Destruktion, Zerfall, Einsturz
+Vermuten = angenommen, glauben, mutmaßlich, vermutlich, denken, schätzen, erwarten, davon ausgehen
 Betragen = sich belaufen auf, ausmachen
-Infektion = Kontamination, Infizierung, Seuche`,
+Infektion = Ansteckung, Infizierung, Kontamination, Seuche, Entzündung`,
     "T30": `Sammelbegriff = Oberbegriff, Gesamtbezeichnung, Gattungsbegriff
-Erkrankung = Leiden, Krankheit
-Zerstören = kaputt machen, ruinieren
-Vorübergehend = temporär, kurzzeitig
-Umfassen = beinhalten, enthalten, abdecken
-Meist = oft, häufig, beliebt`,
-    "T31": `Keineswegs = keinesfalls, niemals, gar nicht
-Abgeordneter = Mandat, Parlamentarier
-Schnell = blitzschnell, rasch, blitzartig
-Redner = Sprecher, Referent
-Kompliziert = schwierig, komplex
+Erkrankung = Krankheit, Leiden, Beschwerde
+Zerstören = beschädigen, ruinieren, vernichten, demolieren, abbauen, kaputt machen
+Vorübergehend = zeitweilig, kurzzeitig, temporär, zeitgebunden, provisorisch
+Umfassen = enthalten, einschließen, beinhalten, abdecken, umschließen
+Meistens = oft, beliebt, häufig, am meisten, überwiegend`,
+    "T31": `Keineswegs = auf keinen Fall, keinesfalls, gar nicht, überhaupt nicht, niemals
+Abgeordneter = Parlamentarier, Tagsmitglied, Volksvertreter, Delegierte, Mandat
+Schnell = blitzschnell, zügig, flink, rasch, flott, eilig
+Redner = Sprecher, Vortragender, Wortführer, Referent
+Kompliziert = schwierig, anspruchsvoll, umständlich, verwickelt, aufwändig, mühsam
 Amt = Behörde, Dienststelle, Institut
-Verfahren = Vorgang, Ablauf, Prozess
-Bewältigen = meistern, bewirken, überwinden`,
+Verfahren = Vorgang, Ablauf, Methode, Prozess
+Bewältigen = meistern, bewirken, überwinden, schaffen, handhaben`,
     "T34": `Verfassung = Grundgesetz, Staatsordnung, Richtlinien
 Besonderheit = Merkmal, Qualifikation, Eigenart
 Dort = da, darin
@@ -439,10 +266,10 @@ Bewerber = Antragsteller, Kandidat, Interessent
 Schwierigkeiten = Hürde, Komplikation, Problem, Sorgen
 Arbeitslos = brotlos, erwerbslos, arbeitssuchend
 Auswahl = Selektion, Wahl, Entscheidung`,
-    "T39": `Mannigfaltig = divers, zahlreich, vielfältig, verschieden
-Bedürfnis = Bedarf, Wille, Ansprüche
-Interesse = Motivation, Aufmerksamkeit, Antlegen
-Voraussetzung = Bedingung, Grundlage, Erfordernisse
+    "T39": `Mannigfaltig = vielfältig, divers, zahlreich, unterschiedlich, verschieden
+Bedürfnis = Wille, Bedarf, Notwendigkeit, Verlangen, Erfordernis, Wunsch, Ansprüche
+Interesse = Motivation, Aufmerksamkeit, Anliegen, Neugier, Neigung
+Voraussetzung = Bedingung, Grundlage, Erfordernis, Anforderung
 Recht = Gesetz, Anspruch, Rechtsordnung`,
     "T41": `Regelung = Ordnung, Norm, Richtlinie
 Gesellschaftlich = sozial, gemeinschaftlich, volksmäßig
@@ -451,42 +278,43 @@ Zahlreich = viel, unzählig, etlich
 Bedingung = Voraussetzung, Kondition, Umstand
 Anspruch = Recht, Forderung, Anrecht
 Bereich = Fach, Sektor, Gebiet`,
-    "T43": `Menge = Anzahl, Volumen, Vielzahl, Masse
-Gelangen = erreichen, hinkommen, am Ziel ankommen
-Anstieg = Wachstum, Zunahme, Erhöhung, Steigerung
+    "T43": `Menge = Anzahl, Volumen, Masse, Vielzahl
+Problem = Konflikt, Hürde, Komplexität
+Abfall = Müll, Entsorgung, Reststoff
+Gelangen = hinkommen, erreichen, am Ziel ankommen
+Scheinbar = anscheinend, vermutlich, womöglich, eventuell
 Folge = Konsequenz, Auswirkung, Resultat
-Problem = Konflikt, Hürde, Haken, Komplexität
-Abfall = Müll, Entsorgung, Reststoffe
-Scheinbar = vermutlich, eventuell, anscheinend, womöglich, vermeintlich`
+Anstieg = Erhöhung, Zunahme, Wachstum, Steigerung`
   }
 };
 
 const TURKISH = {
   "Organismus": "Organizma, canlı varlık",
+  "Lebenswichtig": "Hayati, yaşam için gerekli",
   "Zumindest": "En azından, hiç olmazsa",
-  "Natürlich": "Doğal, elbette, tabii ki",
+  "Natürlich": "Doğal olarak, elbette, kendiliğinden",
   "Rechtzeitig": "Zamanında, vaktinde",
   "Zuständig": "Yetkili, sorumlu",
-  "Verarbeiten": "İşlemek, sindirmek",
-  "Jedoch": "Halbuki, ancak, yine de",
-  "Bewusst": "Bilinçli, farkında",
-  "Zusammenbruch": "Çöküş, çökme, kriz",
-  "Vermuten": "Tahmin etmek, sanmak",
-  "Betragen": "Tutmak (miktar olarak), davranmak",
+  "Verarbeiten": "İşlemek, değerlendirmek, sindirmek",
+  "Jedoch": "Ancak, fakat, yine de",
+  "Bewusst": "Bilinçli, kasten, bilerek",
+  "Zusammenbruch": "Çöküş, kriz, yıkılma",
+  "Vermuten": "Tahmin etmek, varsaymak, ummak",
+  "Betragen": "Tutmak, miktarında olmak",
   "Infektion": "Enfeksiyon, bulaşma",
   "Sammelbegriff": "Genel kavram, çatı terim",
   "Erkrankung": "Hastalık, rahatsızlık",
-  "Zerstören": "Tahrip etmek, yıkmak, yok etmek",
-  "Vorübergehend": "Geçici olarak, muvakkaten",
+  "Zerstören": "Yok etmek, yıkmak, tahrip etmek",
+  "Vorübergehend": "Geçici olarak, bir süreliğine",
   "Umfassen": "Kapsamak, içermek",
-  "Meist": "Çoğunlukla, genellikle",
-  "Keineswegs": "Asla, hiçbir şekilde",
-  "Abgeordneter": "Milletvekili, temsilci",
+  "Meistens": "Çoğunlukla, genellikle",
+  "Keineswegs": "Hiçbir şekilde, asla, katiyen",
+  "Abgeordneter": "Milletvekili, parlamenter",
   "Schnell": "Hızlı, çabuk",
   "Redner": "Konuşmacı, hatip",
-  "Kompliziert": "Karmaşık, çetrefilli",
-  "Amt": "Makam, resmi görev, daire",
-  "Verfahren": "Yöntem, usul, dava, süreç",
+  "Kompliziert": "Karmaşık, zor",
+  "Amt": "Makam, resmi daire, görev",
+  "Verfahren": "Yöntem, usul, süreç/dava",
   "Bewältigen": "Üstesinden gelmek, başarmak",
   "Verfassung": "Anayasa, durum/hal",
   "Besonderheit": "Özellik, tuhaflık",
@@ -499,11 +327,11 @@ const TURKISH = {
   "Schwierigkeiten": "Zorluklar, güçlükler",
   "Arbeitslos": "İşsiz",
   "Auswahl": "Seçim, seçme, çeşit",
-  "Mannigfaltig": "Çeşitli, türlü türlü",
+  "Mannigfaltig": "Çeşit çeşit, binbir türlü, çok çeşitli",
   "Bedürfnis": "İhtiyaç, gereksinim",
-  "Interesse": "İlgi, çıkar, menfaat",
-  "Voraussetzung": "Koşul, şart, önkoşul",
-  "Recht": "Hak, hukuk, doğru",
+  "Interesse": "İlgi, alaka",
+  "Voraussetzung": "Şart, koşul, ön koşul",
+  "Recht": "Hak, hukuk, yasa",
   "Regelung": "Düzenleme, kural",
   "Gesellschaftlich": "Toplumsal, sosyal",
   "Beseitigen": "Ortadan kaldırmak, gidermek",
@@ -511,15 +339,14 @@ const TURKISH = {
   "Bedingung": "Şart, koşul",
   "Anspruch": "Hak, talep, iddia",
   "Bereich": "Alan, bölge, sektör",
-  "Menge": "Miktar, yığın, kalabalık",
-  "Gelangen": "Ulaşmak, varmak",
-  "Anstieg": "Artış, yükseliş, yokuş",
-  "Folge": "Sonuç, takip eden, bölüm",
+  "Menge": "Miktar, yığın, çokluk",
   "Problem": "Problem, sorun",
-  "Abfall": "Çöp, atık, döküntü",
-  "Scheinbar": "Görünüşte, görünüşe göre, zahiri"
+  "Abfall": "Çöp, atık",
+  "Gelangen": "Ulaşmak, varmak",
+  "Scheinbar": "Görünüşte, görünüşe bakılırsa",
+  "Folge": "Sonuç, etki, dizi/bölüm",
+  "Anstieg": "Artış, yükseliş"
 };
-
 
 let ALL_CARDS = [];
 let cards=[], cur=0, score=0, results=[], typed=[], answered=false, flipped=false;
@@ -538,14 +365,12 @@ function parseCards(raw) {
   return out;
 }
 
-// ALL_CARDS = tüm bölümlerdeki kelimeler
 Object.values(SECTIONS).forEach(grup => {
   Object.values(grup).forEach(raw => {
     ALL_CARDS = ALL_CARDS.concat(parseCards(raw));
   });
 });
 
-// Accordion render
 function renderAcc() {
   const container = document.getElementById('acc-render');
   let html = '';
@@ -571,25 +396,20 @@ function renderAcc() {
 }
 renderAcc();
 
-// Kelimeler listesi render — METIN başlıkları SECTIONS key'leri
-const METIN_LABELS = {
-  "T1": "Metin 1 – Johannes Gutenberg"
-};
 function renderWords(filter) {
   const q = (filter || '').toLowerCase().trim();
   let html = '';
   Object.entries(SECTIONS).forEach(([grupAdi, bolumler]) => {
     Object.entries(bolumler).forEach(([bolumAdi, raw]) => {
-      const cards = parseCards(raw);
-      const filtered = q ? cards.filter(c =>
+      const list = parseCards(raw);
+      const filtered = q ? list.filter(c =>
         c.word.toLowerCase().includes(q) ||
         (TURKISH[c.word]||'').toLowerCase().includes(q) ||
         c.meanings.some(m => m.includes(q))
-      ) : cards;
+      ) : list;
       if (filtered.length === 0) return;
-      const label = METIN_LABELS[bolumAdi] || (grupAdi + ' – ' + bolumAdi);
       html += `<div class="metin-group">
-        <div class="metin-title">${label}</div>`;
+        <div class="metin-title">${grupAdi} – ${bolumAdi}</div>`;
       filtered.forEach(c => {
         const tr = TURKISH[c.word] || '';
         html += `<div class="word-item">
@@ -618,7 +438,6 @@ function homeNav(tab) {
   document.getElementById('hpane-' + tab).classList.add('active');
   if (tab === 'kelimeler') renderWords('');
 }
-
 function toggleAcc(id) {
   const btn = document.getElementById(id + '-btn');
   const body = document.getElementById(id + '-body');
@@ -627,7 +446,6 @@ function toggleAcc(id) {
   document.querySelectorAll('.acc-header').forEach(b => b.classList.remove('open'));
   if (!isOpen) { body.classList.add('open'); btn.classList.add('open'); }
 }
-
 function startWithSaved() { launchGame([...ALL_CARDS].sort(() => Math.random() - .5)); }
 function startRandom(n) {
   const sh = [...ALL_CARDS].sort(() => Math.random() - .5);
@@ -682,14 +500,11 @@ function toggleTr() {
 function loadTr(c) {
   const body = document.getElementById("tr-body");
   const tr = TURKISH[c.word];
-  if (tr) {
-    body.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin:2px 0;"><div style="width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;"></div><span>${tr}</span></div>`;
-  } else {
-    body.innerHTML = `<span style="color:var(--muted);font-size:13px;">Türkçe anlam eklenmedi.</span>`;
-  }
+  body.innerHTML = tr
+    ? `<div style="display:flex;align-items:center;gap:8px;margin:2px 0;"><div style="width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0;"></div><span>${tr}</span></div>`
+    : `<span style="color:var(--muted);font-size:13px;">Türkçe anlam eklenmedi.</span>`;
   body.style.display = "none";
-  const arrow = document.getElementById("tr-arrow");
-  if(arrow) arrow.textContent = "▼";
+  document.getElementById("tr-arrow").textContent = "▼";
 }
 function flipCard() {
   flipped = !flipped;
